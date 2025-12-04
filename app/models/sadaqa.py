@@ -96,7 +96,7 @@ class HelpCategory(Base):
     language_id: Mapped[int] = mapped_column(ForeignKey("language.id"), nullable=False)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     is_other: Mapped[bool] = mapped_column(Boolean, nullable=False)
-    status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), nullable=False)
+    status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), nullable=False, default=StatusEnum.active)
 
     language: Mapped["Language"] = relationship(back_populates="help_categories")
     help_requests: Mapped[List["HelpRequest"]] = relationship(back_populates="help_category")
@@ -120,7 +120,7 @@ class HelpRequest(Base):
     help_reason: Mapped[str] = mapped_column(Text, nullable=False)
     received_other_help: Mapped[bool] = mapped_column(Boolean, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
-    status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), nullable=False)
+    status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), nullable=False, default=StatusEnum.active)
 
     help_requests_file: Mapped[List["HelpRequestFile"]] = relationship(back_populates="help_request")
     materials_status: Mapped["MaterialsStatus"] = relationship(back_populates="help_requests")
