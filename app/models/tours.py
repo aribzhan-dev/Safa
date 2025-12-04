@@ -26,7 +26,7 @@ class TourCompanies(Base):
     tours: Mapped[List["Tours"]] = relationship(back_populates="tour_company")
 
     def __repr__(self):
-        return f"<TourCompany -- {self.comp_name}>"
+        return f"<TourCompany -- {self.comp_name}"
 
 
 
@@ -37,7 +37,7 @@ class TourCategories(Base):
     tours: Mapped[List["Tours"]] = relationship(back_populates="tour_category")
 
     def __repr__(self):
-        return f"<TourCategories -- {self.title}>"
+        return f"<TourCategories -- {self.title}"
 
 
 
@@ -50,7 +50,7 @@ class TourGuides(Base):
     tours: Mapped[List["Tours"]] = relationship(back_populates="tour_guid")
 
     def __repr__(self):
-        return f"<TourGuides -- {self.name} {self.surname}>"
+        return f"<TourGuides -- {self.name} {self.surname}"
 
 
 class Tours(Base):
@@ -72,4 +72,4 @@ class Tours(Base):
     tour_guid: Mapped[TourGuides] = relationship(back_populates="tours")
 
     def __repr__(self):
-        return f"<Tours -- {self.location}>"
+        return f"<Tours -- {self.location}"

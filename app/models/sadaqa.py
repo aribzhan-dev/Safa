@@ -30,7 +30,7 @@ class Language(Base):
     title: Mapped[str] = mapped_column(String(200), nullable=False)
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), default=StatusEnum.active)
 
-    companies: Mapped[List["Company"]] = relationship(back_populates="language")
+
     posts: Mapped[List["Post"]] = relationship(back_populates="language")
     notes: Mapped[List["Note"]] = relationship(back_populates="language")
     materials_status: Mapped[List["MaterialsStatus"]] = relationship(back_populates="language")
@@ -40,8 +40,6 @@ class Language(Base):
         return f"<Language {self.code} {self.title}>"
 
 class Company(Base):
-    language_id: Mapped[int] = mapped_column(ForeignKey("language.id"), nullable=False)
-    language: Mapped[Language] = relationship(back_populates="companies")
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     why_collecting: Mapped[str] = mapped_column(Text, nullable=False)
     image: Mapped[str] = mapped_column(String(255), nullable=False)
