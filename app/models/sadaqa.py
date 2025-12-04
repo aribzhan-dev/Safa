@@ -5,7 +5,7 @@ from enum import Enum, IntEnum
 from sqlalchemy import (
     String, Integer, DateTime,
     Enum as SqlEnum, Float,
-    ForeignKey, Text
+    ForeignKey, Text, Boolean
 )
 from datetime import datetime
 from typing import List
@@ -33,7 +33,8 @@ class Language(Base):
     companies: Mapped[List["Company"]] = relationship(back_populates="language")
     posts: Mapped[List["Post"]] = relationship(back_populates="language")
     notes: Mapped[List["Note"]] = relationship(back_populates="language")
-
+    materials_status: Mapped[List["MaterialsStatus"]] = relationship(back_populates="language")
+    help_categories: Mapped[List["HelpCategory"]] = relationship(back_populates="language")
 
     def __repr__(self):
         return f"<Language {self.code} {self.title}>"
@@ -77,6 +78,68 @@ class Note(Base):
 
     def __repr__(self):
         return f"<Note {self.title}>"
+
+
+class MaterialsStatus(Base):
+    language_id: Mapped[int] = mapped_column(ForeignKey("language.id"), nullable=False)
+    title: Mapped[str] = mapped_column(String(100), nullable=False)
+    status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), nullable=False)
+
+    language: Mapped["Language"] = relationship(back_populates="materials_status")
+    help_requests: Mapped[List["HelpRequest"]] = relationship(back_populates="materials_status")
+
+    def __repr__(self):
+        return f"<MaterialsStatus {self.title}>"
+
+
+class HelpCategory(Base):
+    language_id: Mapped[int] = mapped_column(ForeignKey("language.id"), nullable=False)
+    title: Mapped[str] = mapped_column(String(100), nullable=False)
+    is_other: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), nullable=False)
+
+    language: Mapped["Language"] = relationship(back_populates="help_categories")
+    help_requests: Mapped[List["HelpRequest"]] = relationship(back_populates="help_category")
+
+
+    def __repr__(self):
+        return f"<HelpCategory {self.title}>"
+
+
+class HelpRequest(Base):
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    surname: Mapped[str] = mapped_column(String(100), nullable=False)
+    age: Mapped[int] = mapped_column(Integer, nullable=False)
+    phone_number: Mapped[str] = mapped_column(String(20), nullable=False)
+    materials_status_id: Mapped[int] = mapped_column(ForeignKey("materials_status.id"), nullable=False)
+    help_category_id: Mapped[int] = mapped_column(ForeignKey("help_category.id"), nullable=False)
+    other_category: Mapped[str] = mapped_column(String(255), nullable=True)
+    child_num: Mapped[int] = mapped_column(Integer, nullable=False)
+    address: Mapped[str] = mapped_column(String(200), nullable=False)
+    iin: Mapped[str] = mapped_column(String(12), nullable=False)
+    help_reason: Mapped[str] = mapped_column(Text, nullable=False)
+    received_other_help: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), nullable=False)
+
+    help_requests_file: Mapped[List["HelpRequestFile"]] = relationship(back_populates="help_request")
+    materials_status: Mapped["MaterialsStatus"] = relationship(back_populates="help_requests")
+    help_category: Mapped["HelpCategory"] = relationship(back_populates="help_requests")
+
+    def __repr__(self):
+        return f"<HelpRequest {self.name} --- {self.surname}>"
+
+
+class HelpRequestFile(Base):
+    help_request_id: Mapped[int] = mapped_column(ForeignKey("help_request.id"), nullable=False)
+    help_request: Mapped[HelpRequest] = relationship(back_populates="help_requests_file")
+    filename: Mapped[str] = mapped_column(String(255), nullable=False)
+
+
+    def __repr__(self):
+        return f"<HelpRequestFile {self.filename}"
+
+
 
 
 
