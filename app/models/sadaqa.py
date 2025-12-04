@@ -1,16 +1,16 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Integer, DateTime, Enum as SqlEnum, Float
+from sqlalchemy import ForeignKey
 from app.models.base import Base
 from datetime import datetime
 from enum import Enum
-from typing import List
 
 
 class TypeChoices(str, Enum):
-    normal : "Обычный"
-    medium : "Средний"
-    urgent: "Срочный"
-    very_urgent: "Очень срочный"
+    normal = "Обычный"
+    medium = "Средний"
+    urgent = "Срочный"
+    very_urgent = "Очень срочный"
 
 
 
@@ -23,31 +23,34 @@ class Language(Base):
         return f"<Language {self.code} {self.title}>"
 
 class Company(Base):
-    language_id: Mapped[Language] = mapped_column(relationship(Language), nullable=False)
+    language_id: Mapped[int] = mapped_column(ForeignKey("language.id"), nullable=False)
+    language: Mapped[Language] = relationship()
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     why_collecting: Mapped[str] = mapped_column(String, nullable=False)
-    image: Mapped[str] = mapped_column(String, nullable=False)
+    image: Mapped[str] = mapped_column(String(255), nullable=False)
     status: Mapped[int] = mapped_column(Integer, default=0)
 
     def __repr__(self):
-        return f"<Company {self.language_id} {self.title}>"
+        return f"<Company {self.title}>"
 
 
 class Post(Base):
-    language_id: Mapped[Language] = mapped_column(relationship(Language), nullable=False)
-    image: Mapped[str] = mapped_column(String, nullable=False)
+    language_id: Mapped[int] = mapped_column(ForeignKey("language.id"), nullable=False)
+    language: Mapped[Language] = relationship()
+    image: Mapped[str] = mapped_column(String(255), nullable=False)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     content: Mapped[str] = mapped_column(String, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.utcnow)
     status: Mapped[int] = mapped_column(Integer, default=0)
 
     def __repr__(self):
-        return f"<Post {self.language_id} {self.title}>"
+        return f"<Post {self.title}>"
 
 
 class Note(Base):
-    language_id: Mapped[Language] = mapped_column(relationship(Language), nullable=False)
-    image: Mapped[str] = mapped_column(String, nullable=False)
+    language_id: Mapped[int] = mapped_column(ForeignKey("language.id"), nullable=False)
+    language: Mapped[Language] = relationship()
+    image: Mapped[str] = mapped_column(String(255), nullable=False)
     type_choices: Mapped[TypeChoices] = mapped_column(SqlEnum(TypeChoices), nullable=False)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     content: Mapped[str] = mapped_column(String, nullable=False)
@@ -57,7 +60,7 @@ class Note(Base):
     status: Mapped[int] = mapped_column(Integer, default=0)
 
     def __repr__(self):
-        return f"<Note {self.language_id} {self.title}>"
+        return f"<Note {self.title}>"
 
 
 
