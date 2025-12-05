@@ -62,7 +62,7 @@ class TourGuideBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
     surname: str = Field(..., min_length=1, max_length=100)
     about_self: str = Field(..., min_length=5)
-
+    rating: float = Field(..., ge=0, le=5)
 
 class TourGuideCreate(TourGuideBase):
     pass
@@ -72,7 +72,7 @@ class TourGuideUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=100)
     surname: Optional[str] = Field(None, min_length=1, max_length=100)
     about_self: Optional[str] = Field(None, min_length=5)
-
+    ratign: Optional[float] = Field(None, ge=0, le=5)
 
 class TourGuideOut(TourGuideBase):
     id: int

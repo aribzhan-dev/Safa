@@ -36,7 +36,6 @@ class LanguageOut(LanguageBase):
 
 
 
-
 class CompanyBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=100)
     why_collecting: str = Field(..., min_length=1)
@@ -253,7 +252,6 @@ class HelpRequestOut(HelpRequestBase):
 
     class Config:
         from_attributes = True
-
 
 
 

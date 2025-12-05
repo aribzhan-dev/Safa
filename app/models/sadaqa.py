@@ -45,26 +45,35 @@ class Company(Base):
     image: Mapped[str] = mapped_column(String(255), nullable=False)
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), default=StatusEnum.active)
 
+    help_categories: Mapped[List["HelpCategory"]] = relationship(back_populates="company")
+    materials_status: Mapped[List["MaterialsStatus"]] = relationship(back_populates="company")
+    help_requests: Mapped[List["HelpRequest"]] = relationship(back_populates="company")
+    notes: Mapped[List["Note"]] = relationship(back_populates="company")
+    posts: Mapped[List["Post"]] = relationship(back_populates="company")
+
     def __repr__(self):
         return f"<Company {self.title}>"
 
 
 class Post(Base):
+    company_id: Mapped[int] = mapped_column(ForeignKey("company.id"), nullable=False)
     language_id: Mapped[int] = mapped_column(ForeignKey("language.id"), nullable=False)
-    language: Mapped[Language] = relationship(back_populates="posts")
     image: Mapped[str] = mapped_column(String(255), nullable=False)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), default=StatusEnum.active)
 
+    company: Mapped["Company"] = relationship(back_populates="posts")
+    language: Mapped[Language] = relationship(back_populates="posts")
+
     def __repr__(self):
         return f"<Post {self.title}>"
 
 
 class Note(Base):
+    company_id: Mapped[int] = mapped_column(ForeignKey("company.id"), nullable=False)
     language_id: Mapped[int] = mapped_column(ForeignKey("language.id"), nullable=False)
-    language: Mapped[Language] = relationship(back_populates="notes")
     image: Mapped[str] = mapped_column(String(255), nullable=False)
     note_type: Mapped[TypeChoices] = mapped_column(SqlEnum(TypeChoices), nullable=False)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
@@ -74,15 +83,20 @@ class Note(Base):
     collected_money: Mapped[float] = mapped_column(Float, nullable=False)
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), default=StatusEnum.active)
 
+    company: Mapped["Company"] = relationship(back_populates="notes")
+    language: Mapped[Language] = relationship(back_populates="notes")
+
     def __repr__(self):
         return f"<Note {self.title}>"
 
 
 class MaterialsStatus(Base):
+    company_id: Mapped[int] = mapped_column(ForeignKey("company.id"), nullable=False)
     language_id: Mapped[int] = mapped_column(ForeignKey("language.id"), nullable=False)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), nullable=False)
 
+    company: Mapped["Company"] = relationship(back_populates="materials_status")
     language: Mapped["Language"] = relationship(back_populates="materials_status")
     help_requests: Mapped[List["HelpRequest"]] = relationship(back_populates="materials_status")
 
@@ -91,11 +105,13 @@ class MaterialsStatus(Base):
 
 
 class HelpCategory(Base):
+    company_id: Mapped[int] = mapped_column(ForeignKey("company.id"), nullable=False)
     language_id: Mapped[int] = mapped_column(ForeignKey("language.id"), nullable=False)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     is_other: Mapped[bool] = mapped_column(Boolean, nullable=False)
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), nullable=False, default=StatusEnum.active)
 
+    company: Mapped["Company"] = relationship(back_populates="help_categories")
     language: Mapped["Language"] = relationship(back_populates="help_categories")
     help_requests: Mapped[List["HelpRequest"]] = relationship(back_populates="help_category")
 
@@ -105,6 +121,7 @@ class HelpCategory(Base):
 
 
 class HelpRequest(Base):
+    company_id: Mapped[int] = mapped_column(ForeignKey("company.id"), nullable=False)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     surname: Mapped[str] = mapped_column(String(100), nullable=False)
     age: Mapped[int] = mapped_column(Integer, nullable=False)
@@ -120,6 +137,7 @@ class HelpRequest(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), nullable=False, default=StatusEnum.active)
 
+    company: Mapped["Company"] = relationship(back_populates="help_requests")
     help_requests_file: Mapped[List["HelpRequestFile"]] = relationship(back_populates="help_request")
     materials_status: Mapped["MaterialsStatus"] = relationship(back_populates="help_requests")
     help_category: Mapped["HelpCategory"] = relationship(back_populates="help_requests")
