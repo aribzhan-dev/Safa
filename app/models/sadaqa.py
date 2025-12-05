@@ -24,6 +24,22 @@ class StatusEnum(IntEnum):
     archived = 2
 
 
+class CompanyAuth(Base):
+    company_id: Mapped[int] = mapped_column(
+        ForeignKey("company.id"),
+        nullable=False,
+        unique=True,
+    )
+    login: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+
+    company: Mapped["Company"] = relationship(back_populates="auth")
+
+    def __repr__(self):
+        return f"<CompanyAuth {self.login}>"
+
+
 
 class Language(Base):
     code: Mapped[str] = mapped_column(String(10), nullable=False, unique=True)
@@ -45,6 +61,7 @@ class Company(Base):
     image: Mapped[str] = mapped_column(String(255), nullable=False)
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), default=StatusEnum.active)
 
+    auth: Mapped["CompanyAuth"] = relationship(back_populates="company", uselist=False)
     help_categories: Mapped[List["HelpCategory"]] = relationship(back_populates="company")
     materials_status: Mapped[List["MaterialsStatus"]] = relationship(back_populates="company")
     help_requests: Mapped[List["HelpRequest"]] = relationship(back_populates="company")

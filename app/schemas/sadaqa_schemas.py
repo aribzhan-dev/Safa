@@ -1,8 +1,12 @@
 from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional
 from enum import Enum, IntEnum
 
+
+# ==========================
+#   COMMON ENUMS
+# ==========================
 
 class TypeChoices(str, Enum):
     normal = "Обычный"
@@ -18,10 +22,10 @@ class StatusEnum(IntEnum):
 
 
 
+
 class LanguageBase(BaseModel):
     code: str = Field(..., min_length=2, max_length=10)
     title: str = Field(..., min_length=1, max_length=200)
-    
 
 
 class LanguageCreate(LanguageBase):
@@ -36,11 +40,11 @@ class LanguageOut(LanguageBase):
 
 
 
+
 class CompanyBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=100)
     why_collecting: str = Field(..., min_length=1)
     image: str = Field(..., max_length=255)
-    
 
 
 class CompanyCreate(CompanyBase):
@@ -51,7 +55,6 @@ class CompanyUpdate(BaseModel):
     title: Optional[str] = Field(None, min_length=1, max_length=100)
     why_collecting: Optional[str] = None
     image: Optional[str] = Field(None, max_length=255)
-    
 
 
 class CompanyOut(CompanyBase):
@@ -63,12 +66,12 @@ class CompanyOut(CompanyBase):
 
 
 
+
 class PostBase(BaseModel):
     language_id: int
     image: str = Field(..., max_length=255)
     title: str = Field(..., min_length=1, max_length=100)
     content: str
-    
 
 
 class PostCreate(PostBase):
@@ -78,9 +81,8 @@ class PostCreate(PostBase):
 class PostUpdate(BaseModel):
     language_id: Optional[int] = None
     image: Optional[str] = Field(None, max_length=255)
-    title: Optional[str] = Field(None, max_length=100, min_length=1)
+    title: Optional[str] = Field(None, min_length=1, max_length=100)
     content: Optional[str] = None
-    
 
 
 class PostOut(PostBase):
@@ -102,7 +104,6 @@ class NoteBase(BaseModel):
     address: str = Field(..., min_length=1, max_length=200)
     goal_money: float
     collected_money: float
-    
 
 
 class NoteCreate(NoteBase):
@@ -118,7 +119,6 @@ class NoteUpdate(BaseModel):
     address: Optional[str] = Field(None, min_length=1, max_length=200)
     goal_money: Optional[float] = None
     collected_money: Optional[float] = None
-    
 
 
 class NoteOut(NoteBase):
@@ -141,7 +141,6 @@ class MaterialsStatusCreate(MaterialsStatusBase):
 class MaterialsStatusUpdate(BaseModel):
     language_id: Optional[int] = None
     title: Optional[str] = Field(None, min_length=1, max_length=100)
-    
 
 
 class MaterialsStatusOut(MaterialsStatusBase):
@@ -152,11 +151,11 @@ class MaterialsStatusOut(MaterialsStatusBase):
 
 
 
+
 class HelpCategoryBase(BaseModel):
     language_id: int
     title: str = Field(..., min_length=1, max_length=100)
     is_other: bool
-    
 
 
 class HelpCategoryCreate(HelpCategoryBase):
@@ -167,7 +166,6 @@ class HelpCategoryUpdate(BaseModel):
     language_id: Optional[int] = None
     title: Optional[str] = Field(None, min_length=1, max_length=100)
     is_other: Optional[bool] = None
-    
 
 
 class HelpCategoryOut(HelpCategoryBase):
@@ -175,6 +173,7 @@ class HelpCategoryOut(HelpCategoryBase):
 
     class Config:
         from_attributes = True
+
 
 
 
@@ -191,8 +190,6 @@ class HelpRequestBase(BaseModel):
     iin: str = Field(..., min_length=12, max_length=12)
     help_reason: str = Field(..., min_length=5)
     received_other_help: bool
-    
-
 
     @field_validator("phone_number")
     def validate_phone(cls, v):
@@ -255,6 +252,7 @@ class HelpRequestOut(HelpRequestBase):
 
 
 
+
 class HelpRequestFileBase(BaseModel):
     help_request_id: int
     filename: str = Field(..., max_length=255)
@@ -262,6 +260,7 @@ class HelpRequestFileBase(BaseModel):
 
 class HelpRequestFileCreate(HelpRequestFileBase):
     pass
+
 
 class HelpRequestFileOut(HelpRequestFileBase):
     id: int
