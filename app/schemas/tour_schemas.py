@@ -1,14 +1,14 @@
 from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional
 from enum import IntEnum
-
 
 
 class StatusEnum(IntEnum):
     active = 0
     inactive = 1
     archived = 2
+
 
 
 
@@ -30,6 +30,7 @@ class TourCompanyUpdate(BaseModel):
 
 class TourCompanyOut(TourCompanyBase):
     id: int
+    status: StatusEnum
 
     class Config:
         from_attributes = True
@@ -51,6 +52,7 @@ class TourCategoryUpdate(BaseModel):
 
 class TourCategoryOut(TourCategoryBase):
     id: int
+    status: StatusEnum
 
     class Config:
         from_attributes = True
@@ -64,6 +66,7 @@ class TourGuideBase(BaseModel):
     about_self: str = Field(..., min_length=5)
     rating: float = Field(..., ge=0, le=5)
 
+
 class TourGuideCreate(TourGuideBase):
     pass
 
@@ -72,13 +75,17 @@ class TourGuideUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=100)
     surname: Optional[str] = Field(None, min_length=1, max_length=100)
     about_self: Optional[str] = Field(None, min_length=5)
-    ratign: Optional[float] = Field(None, ge=0, le=5)
+    rating: Optional[float] = Field(None, ge=0, le=5)   # FIXED
+
 
 class TourGuideOut(TourGuideBase):
     id: int
+    status: StatusEnum
 
     class Config:
         from_attributes = True
+
+
 
 
 
@@ -96,8 +103,8 @@ class TourBase(BaseModel):
     location: str = Field(..., min_length=1, max_length=255)
 
     @field_validator("return_date")
-    def validate_return_date(cls, v, values):
-        start = values.get("departure_date")
+    def validate_return_date(cls, v, info):
+        start = info.data.get("departure_date")
         if start and v < start:
             raise ValueError("return_date must be later than departure_date")
         return v
@@ -121,8 +128,8 @@ class TourUpdate(BaseModel):
     location: Optional[str] = Field(None, min_length=1, max_length=255)
 
     @field_validator("return_date")
-    def validate_return_update(cls, v, values):
-        start = values.get("departure_date")
+    def validate_return_update(cls, v, info):
+        start = info.data.get("departure_date")
         if start and v and v < start:
             raise ValueError("return_date must be later than departure_date")
         return v
@@ -130,6 +137,7 @@ class TourUpdate(BaseModel):
 
 class TourOut(TourBase):
     id: int
+    status: StatusEnum
 
     class Config:
         from_attributes = True

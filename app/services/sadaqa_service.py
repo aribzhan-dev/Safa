@@ -95,7 +95,6 @@ async def update_company(db: AsyncSession, company_id: int, data: CompanyUpdate)
 
 
 async def create_post(db: AsyncSession, data: PostCreate):
-    # check language exists
     await get_language(db, data.language_id)
 
     post = Post(**data.model_dump())
@@ -142,7 +141,7 @@ async def create_note(db: AsyncSession, data: NoteCreate):
 
     note = Note(**data.model_dump())
 
-    # Extra business rule
+
     if note.collected_money > note.goal_money:
         raise HTTPException(400, "collected_money cannot exceed goal_money")
 
@@ -184,7 +183,6 @@ async def update_note(db: AsyncSession, note_id: int, data: NoteUpdate):
 
 
 async def create_material_status(db: AsyncSession, data: MaterialsStatusCreate):
-    # validate language
     await get_language(db, data.language_id)
 
     ms = MaterialsStatus(**data.model_dump())

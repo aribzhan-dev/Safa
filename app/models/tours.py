@@ -23,35 +23,44 @@ class TourCompanies(Base):
     rating: Mapped[float] = mapped_column(Float(), nullable=False)
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), default=StatusEnum.active)
 
+    categories: Mapped[List["TourCategories"]] = relationship(back_populates="tour_company")
+    guides: Mapped[List["TourGuides"]] = relationship(back_populates="tour_company")
     tours: Mapped[List["Tours"]] = relationship(back_populates="tour_company")
 
     def __repr__(self):
-        return f"<TourCompany -- {self.comp_name}"
+        return f"<TourCompany -- {self.comp_name}>"
 
 
 
 class TourCategories(Base):
+    tour_company_id: Mapped[int] = mapped_column(ForeignKey("tour_companies.id"), nullable=False)
+
     title: Mapped[str] = mapped_column(String(200), nullable=False)
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), default=StatusEnum.active)
 
+    tour_company: Mapped["TourCompanies"] = relationship(back_populates="categories")
     tours: Mapped[List["Tours"]] = relationship(back_populates="tour_category")
 
     def __repr__(self):
-        return f"<TourCategories -- {self.title}"
+        return f"<TourCategories -- {self.title}>"
 
 
 
 class TourGuides(Base):
+    tour_company_id: Mapped[int] = mapped_column(ForeignKey("tour_companies.id"), nullable=False)
+
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     surname: Mapped[str] = mapped_column(String(100), nullable=False)
     about_self: Mapped[str] = mapped_column(Text, nullable=False)
     rating: Mapped[float] = mapped_column(Float(), nullable=False)
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), default=StatusEnum.active)
 
+    tour_company: Mapped["TourCompanies"] = relationship(back_populates="guides")
     tours: Mapped[List["Tours"]] = relationship(back_populates="tour_guid")
 
     def __repr__(self):
-        return f"<TourGuides -- {self.name} {self.surname}"
+        return f"<TourGuides -- {self.name} {self.surname}>"
+
 
 
 class Tours(Base):
@@ -68,9 +77,9 @@ class Tours(Base):
     location: Mapped[str] = mapped_column(String(255), nullable=False)
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), default=StatusEnum.active)
 
-    tour_company: Mapped[TourCompanies] = relationship(back_populates="tours")
-    tour_category: Mapped[TourCategories] = relationship(back_populates="tours")
-    tour_guid: Mapped[TourGuides] = relationship(back_populates="tours")
+    tour_company: Mapped["TourCompanies"] = relationship(back_populates="tours")
+    tour_category: Mapped["TourCategories"] = relationship(back_populates="tours")
+    tour_guid: Mapped["TourGuides"] = relationship(back_populates="tours")
 
     def __repr__(self):
-        return f"<Tours -- {self.location}"
+        return f"<Tours -- {self.location}>"
