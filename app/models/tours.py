@@ -18,6 +18,9 @@ class StatusEnum(IntEnum):
 
 
 class TourCompanies(Base):
+    username: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+
     logo: Mapped[str] = mapped_column(String(200), nullable=False)
     comp_name: Mapped[str] = mapped_column(String(50), nullable=False)
     rating: Mapped[float] = mapped_column(Float(), nullable=False)

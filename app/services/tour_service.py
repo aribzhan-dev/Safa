@@ -12,13 +12,52 @@ from app.schemas.tour_schemas import (
     TourCreate, TourUpdate
 )
 
+from app.core.security import hash_password, verify_password
+from app.core.jwt import create_tokens
+
+
 
 async def create_company(db: AsyncSession, data: TourCompanyCreate):
-    company = TourCompanies(**data.model_dump())
+    # username unique check
+    exists = await db.execute(
+        select(TourCompanies).where(TourCompanies.username == data.username)
+    )
+    if exists.scalar_one_or_none():
+        raise HTTPException(400, "Username already exists")
+
+    company = TourCompanies(
+        username=data.username,
+        password_hash=hash_password(data.password),
+        logo=data.logo,
+        comp_name=data.comp_name,
+        rating=data.rating,
+    )
+
     db.add(company)
     await db.commit()
     await db.refresh(company)
     return company
+
+
+async def login_company(db: AsyncSession, username: str, password: str):
+    result = await db.execute(
+        select(TourCompanies).where(TourCompanies.username == username)
+    )
+    company = result.scalar_one_or_none()
+
+    if not company:
+        raise HTTPException(401, "Invalid username or password")
+
+    if not verify_password(password, company.password_hash):
+        raise HTTPException(401, "Invalid username or password")
+
+    access, refresh = create_tokens({"company_id": company.id})
+
+    return {
+        "access_token": access,
+        "refresh_token": refresh,
+        "token_type": "bearer"
+    }
 
 
 async def get_company(db: AsyncSession, company_id: int):
@@ -28,20 +67,20 @@ async def get_company(db: AsyncSession, company_id: int):
     company = result.scalar_one_or_none()
 
     if not company:
-        raise HTTPException(status_code=404, detail="Company not found")
+        raise HTTPException(404, "Company not found")
 
     return company
-
-
-async def get_companies(db: AsyncSession):
-    result = await db.execute(select(TourCompanies))
-    return result.scalars().all()
 
 
 async def update_company(db: AsyncSession, company_id: int, data: TourCompanyUpdate):
     company = await get_company(db, company_id)
 
-    for key, value in data.model_dump(exclude_unset=True).items():
+    payload = data.model_dump(exclude_unset=True)
+
+    if "password" in payload:
+        payload["password_hash"] = hash_password(payload.pop("password"))
+
+    for key, value in payload.items():
         setattr(company, key, value)
 
     await db.commit()
@@ -50,35 +89,48 @@ async def update_company(db: AsyncSession, company_id: int, data: TourCompanyUpd
 
 
 
-async def create_category(db: AsyncSession, data: TourCategoryCreate):
-    category = TourCategories(**data.model_dump())
+async def create_category(db: AsyncSession, current_company: TourCompanies, data: TourCategoryCreate):
+
+    category = TourCategories(
+        tour_company_id=current_company.id,
+        title=data.title
+    )
+
     db.add(category)
     await db.commit()
     await db.refresh(category)
     return category
 
 
-async def get_category(db: AsyncSession, category_id: int):
+async def get_category(db: AsyncSession, category_id: int, current_company: TourCompanies):
+
     result = await db.execute(
-        select(TourCategories).where(TourCategories.id == category_id)
+        select(TourCategories).where(
+            TourCategories.id == category_id,
+            TourCategories.tour_company_id == current_company.id,
+        )
     )
     category = result.scalar_one_or_none()
 
     if not category:
-        raise HTTPException(status_code=404, detail="Category not found")
+        raise HTTPException(404, "Category not found or no permission")
 
     return category
 
 
+async def get_categories(db: AsyncSession, current_company: TourCompanies):
 
-async def get_categories(db: AsyncSession):
-    result = await db.execute(select(TourCategories))
+    result = await db.execute(
+        select(TourCategories).where(
+            TourCategories.tour_company_id == current_company.id
+        )
+    )
     return result.scalars().all()
 
 
+async def update_category(db: AsyncSession, category_id: int, data: TourCategoryUpdate, current_company: TourCompanies):
 
-async def update_category(db: AsyncSession, category_id: int, data: TourCategoryUpdate):
-    category = await get_category(db, category_id)
+    category = await get_category(db, category_id, current_company)
 
     for key, value in data.model_dump(exclude_unset=True).items():
         setattr(category, key, value)
@@ -89,33 +141,51 @@ async def update_category(db: AsyncSession, category_id: int, data: TourCategory
 
 
 
-async def create_guide(db: AsyncSession, data: TourGuideCreate):
-    guide = TourGuides(**data.model_dump())
+async def create_guide(db: AsyncSession, current_company: TourCompanies, data: TourGuideCreate):
+
+    guide = TourGuides(
+        tour_company_id=current_company.id,
+        name=data.name,
+        surname=data.surname,
+        about_self=data.about_self,
+        rating=data.rating
+    )
+
     db.add(guide)
     await db.commit()
     await db.refresh(guide)
     return guide
 
 
-async def get_guide(db: AsyncSession, guide_id: int):
+async def get_guide(db: AsyncSession, guide_id: int, current_company: TourCompanies):
+
     result = await db.execute(
-        select(TourGuides).where(TourGuides.id == guide_id)
+        select(TourGuides).where(
+            TourGuides.id == guide_id,
+            TourGuides.tour_company_id == current_company.id
+        )
     )
     guide = result.scalar_one_or_none()
 
     if not guide:
-        raise HTTPException(status_code=404, detail="Guide not found")
+        raise HTTPException(404, "Guide not found or no permission")
 
     return guide
 
 
-async def get_guides(db: AsyncSession):
-    result = await db.execute(select(TourGuides))
+async def get_guides(db: AsyncSession, current_company: TourCompanies):
+
+    result = await db.execute(
+        select(TourGuides).where(
+            TourGuides.tour_company_id == current_company.id
+        )
+    )
     return result.scalars().all()
 
 
-async def update_guide(db: AsyncSession, guide_id: int, data: TourGuideUpdate):
-    guide = await get_guide(db, guide_id)
+async def update_guide(db: AsyncSession, guide_id: int, data: TourGuideUpdate, current_company: TourCompanies):
+
+    guide = await get_guide(db, guide_id, current_company)
 
     for key, value in data.model_dump(exclude_unset=True).items():
         setattr(guide, key, value)
@@ -126,55 +196,67 @@ async def update_guide(db: AsyncSession, guide_id: int, data: TourGuideUpdate):
 
 
 
-async def create_tour(db: AsyncSession, data: TourCreate):
-    await get_company(db, data.tour_company_id)
-    await get_category(db, data.tour_category_id)
-    await get_guide(db, data.tour_guid_id)
 
-    tour = Tours(**data.model_dump())
+async def create_tour(db: AsyncSession, current_company: TourCompanies, data: TourCreate):
+
+    category = await get_category(db, data.tour_category_id, current_company)
+    guide = await get_guide(db, data.tour_guid_id, current_company)
+
+    tour = Tours(
+        tour_company_id=current_company.id,
+        tour_category_id=category.id,
+        tour_guid_id=guide.id,
+        image=data.image,
+        price=data.price,
+        departure_date=data.departure_date,
+        return_date=data.return_date,
+        is_new=data.is_new,
+        max_people=data.max_people,
+        location=data.location
+    )
+
     db.add(tour)
     await db.commit()
     await db.refresh(tour)
     return tour
 
 
+async def get_tour(db: AsyncSession, tour_id: int, current_company: TourCompanies):
 
-async def get_tour(db: AsyncSession, tour_id: int):
     result = await db.execute(
-        select(Tours).where(Tours.id == tour_id)
+        select(Tours).where(
+            Tours.id == tour_id,
+            Tours.tour_company_id == current_company.id
+        )
     )
     tour = result.scalar_one_or_none()
 
     if not tour:
-        raise HTTPException(status_code=404, detail="Tour not found")
+        raise HTTPException(404, "Tour not found or no permission")
 
     return tour
 
 
+async def get_tours(db: AsyncSession, current_company: TourCompanies):
 
-async def get_tours(db: AsyncSession, company_id: int | None = None):
-    query = select(Tours)
-
-    if company_id is not None:
-        query = query.where(Tours.tour_company_id == company_id)
-
-    result = await db.execute(query)
+    result = await db.execute(
+        select(Tours).where(
+            Tours.tour_company_id == current_company.id
+        )
+    )
     return result.scalars().all()
 
 
+async def update_tour(db: AsyncSession, tour_id: int, data: TourUpdate, current_company: TourCompanies):
 
-async def update_tour(db: AsyncSession, tour_id: int, data: TourUpdate):
-    tour = await get_tour(db, tour_id)
+    tour = await get_tour(db, tour_id, current_company)
     payload = data.model_dump(exclude_unset=True)
 
-    if "tour_company_id" in payload:
-        await get_company(db, payload["tour_company_id"])
-
     if "tour_category_id" in payload:
-        await get_category(db, payload["tour_category_id"])
+        await get_category(db, payload["tour_category_id"], current_company)
 
     if "tour_guid_id" in payload:
-        await get_guide(db, payload["tour_guid_id"])
+        await get_guide(db, payload["tour_guid_id"], current_company)
 
     for key, value in payload.items():
         setattr(tour, key, value)

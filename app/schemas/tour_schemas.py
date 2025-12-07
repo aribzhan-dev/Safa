@@ -4,13 +4,19 @@ from typing import Optional
 from enum import IntEnum
 
 
+# ==========================
+# ENUM
+# ==========================
+
 class StatusEnum(IntEnum):
     active = 0
     inactive = 1
     archived = 2
 
 
-
+# ==========================
+# TOUR COMPANY SCHEMAS
+# ==========================
 
 class TourCompanyBase(BaseModel):
     logo: str = Field(..., max_length=200)
@@ -19,21 +25,30 @@ class TourCompanyBase(BaseModel):
 
 
 class TourCompanyCreate(TourCompanyBase):
-    pass
+    username: str = Field(..., min_length=3, max_length=50)
+    password: str = Field(..., min_length=6, max_length=100)
 
 
 class TourCompanyUpdate(BaseModel):
     logo: Optional[str] = Field(None, max_length=200)
     comp_name: Optional[str] = Field(None, min_length=1, max_length=50)
     rating: Optional[float] = Field(None, ge=0, le=5)
+    username: Optional[str] = Field(None, min_length=3, max_length=50)
+    password: Optional[str] = Field(None, min_length=6, max_length=100)
 
 
 class TourCompanyOut(TourCompanyBase):
     id: int
-    status: StatusEnum
+    username: str
 
     class Config:
         from_attributes = True
+
+
+
+class TourCompanyLogin(BaseModel):
+    username: str
+    password: str
 
 
 
@@ -52,11 +67,9 @@ class TourCategoryUpdate(BaseModel):
 
 class TourCategoryOut(TourCategoryBase):
     id: int
-    status: StatusEnum
 
     class Config:
         from_attributes = True
-
 
 
 
@@ -75,12 +88,11 @@ class TourGuideUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=100)
     surname: Optional[str] = Field(None, min_length=1, max_length=100)
     about_self: Optional[str] = Field(None, min_length=5)
-    rating: Optional[float] = Field(None, ge=0, le=5)   # FIXED
+    rating: Optional[float] = Field(None, ge=0, le=5)
 
 
 class TourGuideOut(TourGuideBase):
     id: int
-    status: StatusEnum
 
     class Config:
         from_attributes = True
@@ -88,13 +100,11 @@ class TourGuideOut(TourGuideBase):
 
 
 
-
 class TourBase(BaseModel):
-    tour_company_id: int
     tour_category_id: int
     tour_guid_id: int
 
-    image: str = Field(..., min_length=1, max_length=255)
+    image: str = Field(..., max_length=255)
     price: float = Field(..., ge=0)
     departure_date: datetime
     return_date: datetime
@@ -103,10 +113,10 @@ class TourBase(BaseModel):
     location: str = Field(..., min_length=1, max_length=255)
 
     @field_validator("return_date")
-    def validate_return_date(cls, v, info):
-        start = info.data.get("departure_date")
+    def validate_return(cls, v, values):
+        start = values.get("departure_date")
         if start and v < start:
-            raise ValueError("return_date must be later than departure_date")
+            raise ValueError("return_date must be after departure_date")
         return v
 
 
@@ -115,11 +125,10 @@ class TourCreate(TourBase):
 
 
 class TourUpdate(BaseModel):
-    tour_company_id: Optional[int] = None
     tour_category_id: Optional[int] = None
     tour_guid_id: Optional[int] = None
 
-    image: Optional[str] = Field(None, min_length=1, max_length=255)
+    image: Optional[str] = Field(None, max_length=255)
     price: Optional[float] = Field(None, ge=0)
     departure_date: Optional[datetime] = None
     return_date: Optional[datetime] = None
@@ -128,16 +137,15 @@ class TourUpdate(BaseModel):
     location: Optional[str] = Field(None, min_length=1, max_length=255)
 
     @field_validator("return_date")
-    def validate_return_update(cls, v, info):
-        start = info.data.get("departure_date")
+    def validate_return(cls, v, values):
+        start = values.get("departure_date")
         if start and v and v < start:
-            raise ValueError("return_date must be later than departure_date")
+            raise ValueError("return_date must be after departure_date")
         return v
 
 
 class TourOut(TourBase):
     id: int
-    status: StatusEnum
 
     class Config:
         from_attributes = True
