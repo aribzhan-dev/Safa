@@ -4,9 +4,7 @@ from typing import Optional
 from enum import IntEnum
 
 
-# ==========================
-# ENUM
-# ==========================
+
 
 class StatusEnum(IntEnum):
     active = 0
@@ -14,9 +12,6 @@ class StatusEnum(IntEnum):
     archived = 2
 
 
-# ==========================
-# TOUR COMPANY SCHEMAS
-# ==========================
 
 class TourCompanyBase(BaseModel):
     logo: str = Field(..., max_length=200)
