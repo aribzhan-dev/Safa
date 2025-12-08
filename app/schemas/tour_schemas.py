@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 from datetime import datetime
 from typing import Optional
 from enum import IntEnum
@@ -36,8 +36,7 @@ class TourCompanyOut(TourCompanyBase):
     id: int
     username: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 
@@ -63,8 +62,7 @@ class TourCategoryUpdate(BaseModel):
 class TourCategoryOut(TourCategoryBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 
@@ -89,8 +87,7 @@ class TourGuideUpdate(BaseModel):
 class TourGuideOut(TourGuideBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 
@@ -142,5 +139,4 @@ class TourUpdate(BaseModel):
 class TourOut(TourBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

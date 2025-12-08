@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 from datetime import datetime
 from typing import Optional
 from enum import Enum, IntEnum
@@ -25,8 +25,7 @@ class LanguageCreate(LanguageBase):
 class LanguageOut(LanguageBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 
@@ -51,8 +50,7 @@ class CompanyUpdate(BaseModel):
 class CompanyOut(CompanyBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 
@@ -75,8 +73,7 @@ class PostOut(PostBase):
     id: int
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 
@@ -106,8 +103,7 @@ class NoteUpdate(BaseModel):
 class NoteOut(NoteBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class MaterialsStatusBase(BaseModel):
@@ -124,8 +120,7 @@ class MaterialsStatusUpdate(BaseModel):
 class MaterialsStatusOut(MaterialsStatusBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 
@@ -145,8 +140,7 @@ class HelpCategoryUpdate(BaseModel):
 class HelpCategoryOut(HelpCategoryBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 
@@ -198,8 +192,7 @@ class HelpRequestOut(HelpRequestBase):
     id: int
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 
@@ -213,5 +206,4 @@ class HelpRequestFileCreate(HelpRequestFileBase):
 class HelpRequestFileOut(HelpRequestFileBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
