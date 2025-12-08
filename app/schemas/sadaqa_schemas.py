@@ -39,6 +39,10 @@ class CompanyCreate(CompanyBase):
     login: str = Field(..., min_length=3, max_length=100)
     password: str = Field(..., min_length=4)
 
+class CompanyLogin(BaseModel):
+    login: str = Field(..., min_length=3, max_length=100)
+    password: str = Field(..., min_length=3, max_length=100)
+
 class CompanyUpdate(BaseModel):
     title: Optional[str] = None
     why_collecting: Optional[str] = None
