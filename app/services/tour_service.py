@@ -18,7 +18,6 @@ from app.core.jwt import create_tokens
 
 
 async def create_company(db: AsyncSession, data: TourCompanyCreate):
-    # username unique check
     exists = await db.execute(
         select(TourCompanies).where(TourCompanies.username == data.username)
     )

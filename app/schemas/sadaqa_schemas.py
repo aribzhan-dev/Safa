@@ -3,17 +3,11 @@ from datetime import datetime
 from typing import Optional
 from enum import Enum, IntEnum
 
-
-# ==========================
-#   COMMON ENUMS
-# ==========================
-
 class TypeChoices(str, Enum):
     normal = "Обычный"
     medium = "Средний"
     urgent = "Срочный"
     very_urgent = "Очень срочный"
-
 
 class StatusEnum(IntEnum):
     active = 0
@@ -21,16 +15,12 @@ class StatusEnum(IntEnum):
     archived = 2
 
 
-
-
 class LanguageBase(BaseModel):
     code: str = Field(..., min_length=2, max_length=10)
     title: str = Field(..., min_length=1, max_length=200)
 
-
 class LanguageCreate(LanguageBase):
     pass
-
 
 class LanguageOut(LanguageBase):
     id: int
@@ -40,22 +30,19 @@ class LanguageOut(LanguageBase):
 
 
 
-
 class CompanyBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=100)
     why_collecting: str = Field(..., min_length=1)
     image: str = Field(..., max_length=255)
 
-
 class CompanyCreate(CompanyBase):
-    pass
-
+    login: str = Field(..., min_length=3, max_length=100)
+    password: str = Field(..., min_length=4)
 
 class CompanyUpdate(BaseModel):
-    title: Optional[str] = Field(None, min_length=1, max_length=100)
+    title: Optional[str] = None
     why_collecting: Optional[str] = None
-    image: Optional[str] = Field(None, max_length=255)
-
+    image: Optional[str] = None
 
 class CompanyOut(CompanyBase):
     id: int
@@ -65,25 +52,20 @@ class CompanyOut(CompanyBase):
 
 
 
-
-
 class PostBase(BaseModel):
     language_id: int
     image: str = Field(..., max_length=255)
     title: str = Field(..., min_length=1, max_length=100)
     content: str
 
-
 class PostCreate(PostBase):
     pass
 
-
 class PostUpdate(BaseModel):
     language_id: Optional[int] = None
-    image: Optional[str] = Field(None, max_length=255)
-    title: Optional[str] = Field(None, min_length=1, max_length=100)
+    image: Optional[str] = None
+    title: Optional[str] = None
     content: Optional[str] = None
-
 
 class PostOut(PostBase):
     id: int
@@ -94,32 +76,28 @@ class PostOut(PostBase):
 
 
 
-
 class NoteBase(BaseModel):
     language_id: int
-    image: str = Field(..., max_length=255)
+    image: str
     note_type: TypeChoices
-    title: str = Field(..., min_length=1, max_length=100)
+    title: str
     content: str
-    address: str = Field(..., min_length=1, max_length=200)
+    address: str
     goal_money: float
     collected_money: float
-
 
 class NoteCreate(NoteBase):
     pass
 
-
 class NoteUpdate(BaseModel):
     language_id: Optional[int] = None
-    image: Optional[str] = Field(None, max_length=255)
+    image: Optional[str] = None
     note_type: Optional[TypeChoices] = None
-    title: Optional[str] = Field(None, min_length=1, max_length=100)
+    title: Optional[str] = None
     content: Optional[str] = None
-    address: Optional[str] = Field(None, min_length=1, max_length=200)
+    address: Optional[str] = None
     goal_money: Optional[float] = None
     collected_money: Optional[float] = None
-
 
 class NoteOut(NoteBase):
     id: int
@@ -128,20 +106,16 @@ class NoteOut(NoteBase):
         from_attributes = True
 
 
-
 class MaterialsStatusBase(BaseModel):
     language_id: int
-    title: str = Field(..., min_length=1, max_length=100)
-
+    title: str
 
 class MaterialsStatusCreate(MaterialsStatusBase):
     pass
 
-
 class MaterialsStatusUpdate(BaseModel):
     language_id: Optional[int] = None
-    title: Optional[str] = Field(None, min_length=1, max_length=100)
-
+    title: Optional[str] = None
 
 class MaterialsStatusOut(MaterialsStatusBase):
     id: int
@@ -151,22 +125,18 @@ class MaterialsStatusOut(MaterialsStatusBase):
 
 
 
-
 class HelpCategoryBase(BaseModel):
     language_id: int
-    title: str = Field(..., min_length=1, max_length=100)
+    title: str
     is_other: bool
-
 
 class HelpCategoryCreate(HelpCategoryBase):
     pass
 
-
 class HelpCategoryUpdate(BaseModel):
     language_id: Optional[int] = None
-    title: Optional[str] = Field(None, min_length=1, max_length=100)
+    title: Optional[str] = None
     is_other: Optional[bool] = None
-
 
 class HelpCategoryOut(HelpCategoryBase):
     id: int
@@ -176,19 +146,18 @@ class HelpCategoryOut(HelpCategoryBase):
 
 
 
-
 class HelpRequestBase(BaseModel):
-    name: str = Field(..., min_length=1, max_length=100)
-    surname: str = Field(..., min_length=1, max_length=100)
-    age: int = Field(..., gt=0)
-    phone_number: str = Field(..., min_length=10, max_length=20)
+    name: str
+    surname: str
+    age: int
+    phone_number: str
     materials_status_id: int
     help_category_id: int
-    other_category: Optional[str] = Field(None, max_length=255)
-    child_num: int = Field(..., ge=0)
-    address: str = Field(..., min_length=1, max_length=200)
-    iin: str = Field(..., min_length=12, max_length=12)
-    help_reason: str = Field(..., min_length=5)
+    other_category: Optional[str] = None
+    child_num: int
+    address: str
+    iin: str
+    help_reason: str
     received_other_help: bool
 
     @field_validator("phone_number")
@@ -199,9 +168,7 @@ class HelpRequestBase(BaseModel):
 
     @field_validator("iin")
     def validate_iin(cls, v):
-        if not v.isdigit():
-            raise ValueError("IIN must contain only digits")
-        if len(v) != 12:
+        if not v.isdigit() or len(v) != 12:
             raise ValueError("IIN must be exactly 12 digits")
         return v
 
@@ -209,39 +176,19 @@ class HelpRequestBase(BaseModel):
 class HelpRequestCreate(HelpRequestBase):
     pass
 
-
 class HelpRequestUpdate(BaseModel):
-    name: Optional[str] = Field(None, min_length=1, max_length=100)
-    surname: Optional[str] = Field(None, min_length=1, max_length=100)
+    name: Optional[str] = None
+    surname: Optional[str] = None
     age: Optional[int] = None
-    phone_number: Optional[str] = Field(None, min_length=10, max_length=20)
+    phone_number: Optional[str] = None
     materials_status_id: Optional[int] = None
     help_category_id: Optional[int] = None
-    other_category: Optional[str] = Field(None, max_length=255)
+    other_category: Optional[str] = None
     child_num: Optional[int] = None
-    address: Optional[str] = Field(None, min_length=1, max_length=200)
-    iin: Optional[str] = Field(None, min_length=12, max_length=12)
+    address: Optional[str] = None
+    iin: Optional[str] = None
     help_reason: Optional[str] = None
     received_other_help: Optional[bool] = None
-
-    @field_validator("phone_number")
-    def validate_phone(cls, v):
-        if v is None:
-            return v
-        if not v.replace("+", "").replace("-", "").isdigit():
-            raise ValueError("Phone number must contain only digits, + or -")
-        return v
-
-    @field_validator("iin")
-    def validate_iin(cls, v):
-        if v is None:
-            return v
-        if not v.isdigit():
-            raise ValueError("IIN must contain only digits")
-        if len(v) != 12:
-            raise ValueError("IIN must be exactly 12 digits")
-        return v
-
 
 class HelpRequestOut(HelpRequestBase):
     id: int
@@ -252,15 +199,12 @@ class HelpRequestOut(HelpRequestBase):
 
 
 
-
 class HelpRequestFileBase(BaseModel):
     help_request_id: int
-    filename: str = Field(..., max_length=255)
-
+    filename: str
 
 class HelpRequestFileCreate(HelpRequestFileBase):
     pass
-
 
 class HelpRequestFileOut(HelpRequestFileBase):
     id: int
