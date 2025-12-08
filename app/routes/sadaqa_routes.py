@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.core.deps import get_db, get_current_company
+from app.core.sadaqa_deps import get_current_sadaqa_company
+from app.core.db import get_session as get_db
 from app.schemas.sadaqa_schemas import (
     LanguageCreate, LanguageOut,
     CompanyCreate, CompanyUpdate, CompanyOut,
@@ -54,7 +54,7 @@ async def list_languages(db: AsyncSession = Depends(get_db)):
 async def update_my_company(
     data: CompanyUpdate,
     db: AsyncSession = Depends(get_db),
-    company = Depends(get_current_company)
+    company = Depends(get_current_sadaqa_company)
 ):
     return await update_company(db, company.id, data)
 
@@ -64,7 +64,7 @@ async def update_my_company(
 async def create_my_post(
     data: PostCreate,
     db: AsyncSession = Depends(get_db),
-    company = Depends(get_current_company)
+    company = Depends(get_current_sadaqa_company)
 ):
     return await create_post(db, data, company)
 
@@ -73,7 +73,7 @@ async def create_my_post(
 @router.get("/company/posts", response_model=list[PostOut])
 async def get_my_posts(
     db: AsyncSession = Depends(get_db),
-    company = Depends(get_current_company)
+    company = Depends(get_current_sadaqa_company)
 ):
     return await get_posts(db, company)
 
@@ -83,7 +83,7 @@ async def update_my_post(
     post_id: int,
     data: PostUpdate,
     db: AsyncSession = Depends(get_db),
-    company = Depends(get_current_company)
+    company = Depends(get_current_sadaqa_company)
 ):
     return await update_post(db, post_id, data, company)
 
@@ -93,7 +93,7 @@ async def update_my_post(
 async def create_my_note(
     data: NoteCreate,
     db: AsyncSession = Depends(get_db),
-    company = Depends(get_current_company)
+    company = Depends(get_current_sadaqa_company)
 ):
     return await create_note(db, data, company)
 
@@ -101,7 +101,7 @@ async def create_my_note(
 @router.get("/company/notes", response_model=list[NoteOut])
 async def get_my_notes(
     db: AsyncSession = Depends(get_db),
-    company = Depends(get_current_company)
+    company = Depends(get_current_sadaqa_company)
 ):
     return await get_notes(db, company)
 
@@ -111,7 +111,7 @@ async def update_my_note(
     note_id: int,
     data: NoteUpdate,
     db: AsyncSession = Depends(get_db),
-    company = Depends(get_current_company)
+    company = Depends(get_current_sadaqa_company)
 ):
     return await update_note(db, note_id, data, company)
 
@@ -121,7 +121,7 @@ async def update_my_note(
 async def create_my_material_status(
     data: MaterialsStatusCreate,
     db: AsyncSession = Depends(get_db),
-    company = Depends(get_current_company)
+    company = Depends(get_current_sadaqa_company)
 ):
     return await create_material_status(db, data, company)
 
@@ -129,7 +129,7 @@ async def create_my_material_status(
 @router.get("/company/materials", response_model=list[MaterialsStatusOut])
 async def get_my_materials_statuses(
     db: AsyncSession = Depends(get_db),
-    company = Depends(get_current_company)
+    company = Depends(get_current_sadaqa_company)
 ):
     return await get_material_statuses(db, company)
 
@@ -139,7 +139,7 @@ async def update_my_material_status(
     ms_id: int,
     data: MaterialsStatusUpdate,
     db: AsyncSession = Depends(get_db),
-    company = Depends(get_current_company)
+    company = Depends(get_current_sadaqa_company)
 ):
     return await update_material_status(db, ms_id, data, company)
 
@@ -149,7 +149,7 @@ async def update_my_material_status(
 async def create_my_help_category(
     data: HelpCategoryCreate,
     db: AsyncSession = Depends(get_db),
-    company = Depends(get_current_company)
+    company = Depends(get_current_sadaqa_company)
 ):
     return await create_help_category(db, data, company)
 
@@ -157,7 +157,7 @@ async def create_my_help_category(
 @router.get("/company/categories", response_model=list[HelpCategoryOut])
 async def get_my_help_categories(
     db: AsyncSession = Depends(get_db),
-    company = Depends(get_current_company)
+    company = Depends(get_current_sadaqa_company)
 ):
     return await get_help_categories(db, company)
 
@@ -167,7 +167,7 @@ async def update_my_help_category(
     cat_id: int,
     data: HelpCategoryUpdate,
     db: AsyncSession = Depends(get_db),
-    company = Depends(get_current_company)
+    company = Depends(get_current_sadaqa_company)
 ):
     return await update_help_category(db, cat_id, data, company)
 
@@ -178,7 +178,7 @@ async def update_my_help_category(
 async def create_my_help_request(
     data: HelpRequestCreate,
     db: AsyncSession = Depends(get_db),
-    company = Depends(get_current_company)
+    company = Depends(get_current_sadaqa_company)
 ):
     return await create_help_request(db, data, company)
 
@@ -186,7 +186,7 @@ async def create_my_help_request(
 @router.get("/company/help-requests", response_model=list[HelpRequestOut])
 async def get_my_help_requests(
     db: AsyncSession = Depends(get_db),
-    company = Depends(get_current_company)
+    company = Depends(get_current_sadaqa_company)
 ):
     return await get_help_requests(db, company)
 
@@ -196,7 +196,7 @@ async def update_my_help_request(
     hr_id: int,
     data: HelpRequestUpdate,
     db: AsyncSession = Depends(get_db),
-    company = Depends(get_current_company)
+    company = Depends(get_current_sadaqa_company)
 ):
     return await update_help_request(db, hr_id, data, company)
 
@@ -206,6 +206,6 @@ async def update_my_help_request(
 async def upload_my_help_request_file(
     data: HelpRequestFileCreate,
     db: AsyncSession = Depends(get_db),
-    company = Depends(get_current_company)
+    company = Depends(get_current_sadaqa_company)
 ):
     return await create_help_request_file(db, data, company)

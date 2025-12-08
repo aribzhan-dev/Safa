@@ -14,7 +14,7 @@ from app.services.tour_service import (
     create_guide, get_guide, get_guides, update_guide,
     create_tour, get_tour, get_tours, update_tour
 )
-from app.core.deps import get_current_company
+from app.core.tour_deps import get_current_company
 
 
 router = APIRouter(prefix="/tour", tags=["Tour System"])
