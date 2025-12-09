@@ -1,20 +1,22 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from fastapi import HTTPException, status
-
 from app.models.tours import (
-    TourCompanies, TourCategories, TourGuides, Tours, TourFiles
+    TourCompanies, TourCategories,
+    TourGuides, Tours, TourFiles,
+    BookingTour
 )
 from app.schemas.tour_schemas import (
     TourCompanyCreate, TourCompanyUpdate,
     TourCategoryCreate, TourCategoryUpdate,
     TourGuideCreate, TourGuideUpdate,
     TourCreate, TourUpdate, TourFileCreate,
-)
+    BookingCreate,
 
+)
 from app.core.security import hash_password, verify_password
 from app.core.jwt import create_tokens
-
+import string, datetime,random
 
 
 async def create_company(db: AsyncSession, data: TourCompanyCreate):
@@ -320,3 +322,33 @@ async def delete_tour_file(
     await db.commit()
 
     return {"detail": "File deleted"}
+
+
+
+def generate_secret_code() -> str:
+    return "".join(random.choices(string.digits, k=6))
+
+
+async def create_booking(db: AsyncSession, data: BookingCreate):
+    secret = generate_secret_code()
+
+    booking = BookingTour(
+        tour_company_id=data.tour_company_id,
+        tour_category_id=data.tour_category_id,
+        tour_id=data.tour_id,
+        person_number=data.person_number,
+        name=data.name,
+        surname=data.surname,
+        patronymic=data.patronymic,
+        phone=data.phone,
+        email=data.email,
+        passport_number=data.passport_number,
+        date_of_birth=data.date_of_birth,
+        booking_date=datetime.utcnow(),
+        secret_code=secret
+    )
+
+    db.add(booking)
+    await db.commit()
+    await db.refresh(booking)
+    return booking

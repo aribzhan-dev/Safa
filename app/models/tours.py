@@ -115,6 +115,7 @@ class BookingTour(Base):
     passport_number: Mapped[str] = mapped_column(String(10), nullable=False)
     date_of_birth: Mapped[datetime] = mapped_column(DateTime(), nullable=False)
     booking_date: Mapped[datetime] = mapped_column(DateTime(), nullable=False, server_default=func.now())
+    secret_code: Mapped[str] = mapped_column(String(20), nullable=False)
 
 
     tour: Mapped[Tours] = relationship(back_populates="booking")

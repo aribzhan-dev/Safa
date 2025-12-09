@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, field_validator, ConfigDict
+from pydantic import BaseModel, Field, field_validator, ConfigDict, EmailStr
 from datetime import datetime
 from typing import Optional
 from enum import IntEnum
@@ -157,3 +157,45 @@ class TourFileOut(TourFileBase):
     tour_id: int
 
     model_config = ConfigDict(from_attributes=True)
+
+
+
+class BookingBase(BaseModel):
+    person_number: int
+    name: str
+    surname: str
+    patronymic: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    passport_number: Optional[str] = None
+    date_of_birth: Optional[datetime] = None
+
+
+class BookingCreate(BookingBase):
+    tour_company_id: int
+    tour_category_id: int
+    tour_id: int
+
+
+class BookingUpdate(BaseModel):
+    secret_code: str = Field(..., min_length=4)
+
+    person_number: Optional[int] = None
+    name: Optional[str] = None
+    surname: Optional[str] = None
+    patronymic: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    passport_number: Optional[str] = None
+    date_of_birth: Optional[datetime] = None
+
+
+class BookingOut(BookingBase):
+    id: int
+    tour_id: int
+    tour_company_id: int
+    tour_category_id: int
+    secret_code: str
+    booking_date: Optional[datetime]
+
+    model_config = {"from_attributes": True}
