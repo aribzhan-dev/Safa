@@ -4,7 +4,7 @@ from enum import IntEnum
 from sqlalchemy import (
     String, Integer, DateTime,
     Enum as SqlEnum, Float,
-    ForeignKey, Text, Boolean
+    ForeignKey, Text, Boolean, func
 )
 from datetime import datetime
 from typing import List
@@ -75,6 +75,7 @@ class Tours(Base):
     price: Mapped[float] = mapped_column(Float(), nullable=False)
     departure_date: Mapped[datetime] = mapped_column(DateTime(), nullable=False)
     return_date: Mapped[datetime] = mapped_column(DateTime(), nullable=False)
+    duration: Mapped[int] = mapped_column(Integer(), nullable=False)
     is_new: Mapped[bool] = mapped_column(Boolean(), nullable=False)
     max_people: Mapped[int] = mapped_column(Integer(), nullable=False)
     location: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -84,6 +85,7 @@ class Tours(Base):
     tour_category: Mapped["TourCategories"] = relationship(back_populates="tours")
     tour_guid: Mapped["TourGuides"] = relationship(back_populates="tours")
     files: Mapped[List["TourFiles"]] = relationship(back_populates="tour")
+    booking: Mapped[List["BookingTour"]] = relationship(back_populates="tour")
 
     def __repr__(self):
         return f"<Tours -- {self.location}>"
@@ -94,7 +96,29 @@ class TourFiles(Base):
 
     file_name: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    tour: Mapped[Tours] = relationship(back_populates="tour_files")
+    tour: Mapped[Tours] = relationship(back_populates="files")
 
     def __repr__(self):
         return f"<TourFile -- {self.file_name}>"
+
+
+
+class BookingTour(Base):
+    tour_id: Mapped[int] = mapped_column(ForeignKey("tours.id"), nullable=False)
+
+    person_number: Mapped[int] = mapped_column(Integer(), nullable=False)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    surname: Mapped[str] = mapped_column(String(255), nullable=False)
+    patronymic: Mapped[str] = mapped_column(String(255), nullable=True)
+    phone: Mapped[str] = mapped_column(String(255), nullable=False)
+    email: Mapped[str] = mapped_column(String(255), nullable=True)
+    passport_number: Mapped[str] = mapped_column(String(10), nullable=False)
+    date_of_birth: Mapped[datetime] = mapped_column(DateTime(), nullable=False)
+    booking_date: Mapped[datetime] = mapped_column(DateTime(), nullable=False, server_default=func.now())
+
+
+    tour: Mapped[Tours] = relationship(back_populates="booking")
+
+    def __repr__(self):
+        return f"<BookingTour -- {self.name} -- {self.surname}>"
+

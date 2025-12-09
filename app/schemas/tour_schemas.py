@@ -100,6 +100,7 @@ class TourBase(BaseModel):
     price: float = Field(..., ge=0)
     departure_date: datetime
     return_date: datetime
+    duration: int = Field(..., ge=0)
     is_new: bool
     max_people: int = Field(..., ge=1)
     location: str = Field(..., min_length=1, max_length=255)
@@ -124,6 +125,7 @@ class TourUpdate(BaseModel):
     price: Optional[float] = Field(None, ge=0)
     departure_date: Optional[datetime] = None
     return_date: Optional[datetime] = None
+    duration: Optional[int] = Field(None, ge=0)
     is_new: Optional[bool] = None
     max_people: Optional[int] = Field(None, ge=1)
     location: Optional[str] = Field(None, min_length=1, max_length=255)
