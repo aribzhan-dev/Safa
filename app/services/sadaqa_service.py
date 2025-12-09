@@ -28,7 +28,8 @@ async def create_company(db: AsyncSession, data: CompanyCreate):
     company = Company(
         title=data.title,
         why_collecting=data.why_collecting,
-        image=data.image
+        image=data.image,
+        payment=data.payment,
     )
 
     db.add(company)

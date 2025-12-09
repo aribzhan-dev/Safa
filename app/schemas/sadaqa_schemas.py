@@ -33,6 +33,7 @@ class CompanyBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=100)
     why_collecting: str = Field(..., min_length=1)
     image: str = Field(..., max_length=255)
+    payment: str = Field(..., min_length=1, max_length=300)
 
 class CompanyCreate(CompanyBase):
     login: str = Field(..., min_length=3, max_length=100)
@@ -46,6 +47,7 @@ class CompanyUpdate(BaseModel):
     title: Optional[str] = None
     why_collecting: Optional[str] = None
     image: Optional[str] = None
+    payment: Optional[str] = None
 
 class CompanyOut(CompanyBase):
     id: int
