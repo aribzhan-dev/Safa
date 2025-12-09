@@ -199,7 +199,6 @@ class HelpRequestOut(HelpRequestBase):
 
 
 class HelpRequestFileBase(BaseModel):
-    help_request_id: int
     filename: str
 
 class HelpRequestFileCreate(HelpRequestFileBase):
@@ -207,5 +206,6 @@ class HelpRequestFileCreate(HelpRequestFileBase):
 
 class HelpRequestFileOut(HelpRequestFileBase):
     id: int
+    help_request_id: int
 
     model_config = ConfigDict(from_attributes=True)

@@ -140,12 +140,13 @@ class HelpCategory(Base):
 
 class HelpRequest(Base):
     company_id: Mapped[int] = mapped_column(ForeignKey("company.id"), nullable=False)
+    materials_status_id: Mapped[int] = mapped_column(ForeignKey("materials_status.id"), nullable=False)
+    help_category_id: Mapped[int] = mapped_column(ForeignKey("help_category.id"), nullable=False)
+
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     surname: Mapped[str] = mapped_column(String(100), nullable=False)
     age: Mapped[int] = mapped_column(Integer, nullable=False)
     phone_number: Mapped[str] = mapped_column(String(20), nullable=False)
-    materials_status_id: Mapped[int] = mapped_column(ForeignKey("materials_status.id"), nullable=False)
-    help_category_id: Mapped[int] = mapped_column(ForeignKey("help_category.id"), nullable=False)
     other_category: Mapped[str] = mapped_column(String(255), nullable=True)
     child_num: Mapped[int] = mapped_column(Integer, nullable=False)
     address: Mapped[str] = mapped_column(String(200), nullable=False)
@@ -166,8 +167,9 @@ class HelpRequest(Base):
 
 class HelpRequestFile(Base):
     help_request_id: Mapped[int] = mapped_column(ForeignKey("help_request.id"), nullable=False)
-    help_request: Mapped[HelpRequest] = relationship(back_populates="help_requests_file")
     filename: Mapped[str] = mapped_column(String(255), nullable=False)
+
+    help_request: Mapped[HelpRequest] = relationship(back_populates="help_requests_file")
 
 
     def __repr__(self):

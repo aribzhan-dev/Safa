@@ -334,3 +334,13 @@ async def create_help_request_file(db: AsyncSession, data: HelpRequestFileCreate
     await db.commit()
     await db.refresh(file)
     return file
+
+
+async def get_help_request_files(db: AsyncSession, help_request: HelpRequest):
+    r = await db.execute(
+        select(HelpRequestFile).where(
+            HelpRequestFile.help_request_id == help_request.id
+        )
+    )
+
+    return r.scalars().all()
