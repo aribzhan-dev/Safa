@@ -3,13 +3,13 @@ from sqlalchemy import select
 from fastapi import HTTPException, status
 
 from app.models.tours import (
-    TourCompanies, TourCategories, TourGuides, Tours
+    TourCompanies, TourCategories, TourGuides, Tours, TourFiles
 )
 from app.schemas.tour_schemas import (
     TourCompanyCreate, TourCompanyUpdate,
     TourCategoryCreate, TourCategoryUpdate,
     TourGuideCreate, TourGuideUpdate,
-    TourCreate, TourUpdate
+    TourCreate, TourUpdate, TourFileCreate,
 )
 
 from app.core.security import hash_password, verify_password
@@ -263,3 +263,60 @@ async def update_tour(db: AsyncSession, tour_id: int, data: TourUpdate, current_
     await db.commit()
     await db.refresh(tour)
     return tour
+
+
+async def create_tour_file(
+    db: AsyncSession,
+    tour_id: int,
+    data: TourFileCreate,
+    company: TourCompanies
+):
+    await get_tour(db, tour_id, company)
+
+    file = TourFiles(
+        tour_id=tour_id,
+        file_name=data.file_name
+    )
+
+    db.add(file)
+    await db.commit()
+    await db.refresh(file)
+    return file
+
+
+
+async def get_tour_files(
+    db: AsyncSession,
+    tour_id: int,
+    company: TourCompanies
+):
+    await get_tour(db, tour_id, company)
+
+    result = await db.execute(
+        select(TourFiles).where(
+            TourFiles.tour_id == tour_id
+        )
+    )
+    return result.scalars().all()
+
+
+
+async def delete_tour_file(
+    db: AsyncSession,
+    file_id: int,
+    company: TourCompanies
+):
+    result = await db.execute(
+        select(TourFiles).where(TourFiles.id == file_id)
+    )
+    file = result.scalar_one_or_none()
+
+    if not file:
+        raise HTTPException(404, "File not found")
+
+    await get_tour(db, file.tour_id, company)
+
+    await db.delete(file)
+    await db.commit()
+
+    return {"detail": "File deleted"}

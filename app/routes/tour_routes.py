@@ -6,13 +6,14 @@ from app.schemas.tour_schemas import (
     TourCompanyCreate, TourCompanyUpdate,
     TourCategoryCreate, TourCategoryUpdate,
     TourGuideCreate, TourGuideUpdate,
-    TourCreate, TourUpdate,
+    TourCreate, TourUpdate,TourFileCreate,
 )
 from app.services.tour_service import (
     create_company, login_company, get_company, update_company,
     create_category, get_category, get_categories, update_category,
     create_guide, get_guide, get_guides, update_guide,
-    create_tour, get_tour, get_tours, update_tour
+    create_tour, get_tour, get_tours, update_tour,
+    create_tour_file, delete_tour_file, get_tour_files,
 )
 from app.core.tour_deps import get_current_company
 
@@ -170,3 +171,31 @@ async def patch_tour(
     current_company = Depends(get_current_company)
 ):
     return await update_tour(db, tour_id, data, current_company)
+
+
+@router.post("/tours/{tour_id}/files", summary="Create tour file")
+async def create_new_tour_file(
+    tour_id: int,
+    data: TourFileCreate,
+    db: AsyncSession = Depends(get_session),
+    current_company = Depends(get_current_company)
+):
+    return await create_tour_file(db, tour_id, data, current_company)
+
+
+@router.get("/tours/{tour_id}/files", summary="List tour files")
+async def list_tour_files(
+    tour_id: int,
+    db: AsyncSession = Depends(get_session),
+    current_company = Depends(get_current_company)
+):
+    return await get_tour_files(db, tour_id, current_company)
+
+
+@router.delete("/tour_files/{file_id}", summary="Delete tour file")
+async def delete_tour_file_route(
+    file_id: int,
+    db: AsyncSession = Depends(get_session),
+    current_company = Depends(get_current_company)
+):
+    return await delete_tour_file(db, file_id, current_company)
