@@ -59,7 +59,7 @@ class Company(Base):
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     why_collecting: Mapped[str] = mapped_column(Text, nullable=False)
     image: Mapped[str] = mapped_column(String(255), nullable=False)
-    payment: Mapped[str] = mapped_column(String(300), nullable=False)
+    payment: Mapped[str] = mapped_column(String(300), nullable=False, unique=True)
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), default=StatusEnum.active)
 
     auth: Mapped["CompanyAuth"] = relationship(back_populates="company", uselist=False)
