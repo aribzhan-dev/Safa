@@ -140,3 +140,18 @@ class TourOut(TourBase):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
+
+
+
+class TourFileBase(BaseModel):
+    file_name: str
+
+
+class TourFileCreate(TourFileBase):
+    pass
+
+class TourFileOut(TourFileBase):
+    id: int
+    tour_id: int
+
+    model_config = ConfigDict(from_attributes=True)

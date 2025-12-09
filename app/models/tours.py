@@ -83,6 +83,18 @@ class Tours(Base):
     tour_company: Mapped["TourCompanies"] = relationship(back_populates="tours")
     tour_category: Mapped["TourCategories"] = relationship(back_populates="tours")
     tour_guid: Mapped["TourGuides"] = relationship(back_populates="tours")
+    files: Mapped[List["TourFiles"]] = relationship(back_populates="tour")
 
     def __repr__(self):
         return f"<Tours -- {self.location}>"
+
+
+class TourFiles(Base):
+    tour_id: Mapped[int] = mapped_column(ForeignKey("tours.id"), nullable=False)
+
+    file_name: Mapped[str] = mapped_column(String(255), nullable=False)
+
+    tour: Mapped[Tours] = relationship(back_populates="tour_files")
+
+    def __repr__(self):
+        return f"<TourFile -- {self.file_name}>"
