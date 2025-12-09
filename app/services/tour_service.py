@@ -11,7 +11,7 @@ from app.schemas.tour_schemas import (
     TourCategoryCreate, TourCategoryUpdate,
     TourGuideCreate, TourGuideUpdate,
     TourCreate, TourUpdate, TourFileCreate,
-    BookingCreate,
+    BookingCreate, BookingUpdate,
 
 )
 from app.core.security import hash_password, verify_password
@@ -330,11 +330,17 @@ def generate_secret_code() -> str:
 
 
 async def create_booking(db: AsyncSession, data: BookingCreate):
+    result = await db.execute(
+        select(Tours).where(Tours.id == data.tour_id)
+    )
+    tour = result.scalar_one_or_none()
+
+    if not tour:
+        raise HTTPException(404, "Tour not found")
+
     secret = generate_secret_code()
 
     booking = BookingTour(
-        tour_company_id=data.tour_company_id,
-        tour_category_id=data.tour_category_id,
         tour_id=data.tour_id,
         person_number=data.person_number,
         name=data.name,
@@ -344,11 +350,43 @@ async def create_booking(db: AsyncSession, data: BookingCreate):
         email=data.email,
         passport_number=data.passport_number,
         date_of_birth=data.date_of_birth,
-        booking_date=datetime.utcnow(),
-        secret_code=secret
+        secret_code=secret,
     )
 
     db.add(booking)
     await db.commit()
     await db.refresh(booking)
     return booking
+
+
+
+async def update_booking(db: AsyncSession, booking_id: int, data: BookingUpdate):
+    result = await db.execute(
+        select(BookingTour).where(BookingTour.id == booking_id)
+    )
+    booking = result.scalar_one_or_none()
+
+    if not booking:
+        raise HTTPException(404, "Booking not found")
+
+    if booking.secret_code != data.secret_code:
+        raise HTTPException(403, "Incorrect secret code")
+
+    for key, value in data.model_dump(exclude_unset=True).items():
+        if key == "secret_code":
+            continue
+        setattr(booking, key, value)
+
+    await db.commit()
+    await db.refresh(booking)
+    return
+
+
+
+async def get_company_bookings(db: AsyncSession, company: TourCompanies):
+    result = await db.execute(
+        select(BookingTour).join(Tours).where(
+            Tours.tour_company_id == company.id
+        )
+    )
+    return result.scalars().all()

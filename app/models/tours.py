@@ -117,7 +117,6 @@ class BookingTour(Base):
     booking_date: Mapped[datetime] = mapped_column(DateTime(), nullable=False, server_default=func.now())
     secret_code: Mapped[str] = mapped_column(String(20), nullable=False)
 
-
     tour: Mapped[Tours] = relationship(back_populates="booking")
 
     def __repr__(self):

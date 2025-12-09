@@ -165,25 +165,26 @@ class BookingBase(BaseModel):
     name: str
     surname: str
     patronymic: Optional[str] = None
-    phone: Optional[str] = None
+
+    phone: str
     email: Optional[str] = None
-    passport_number: Optional[str] = None
-    date_of_birth: Optional[datetime] = None
+
+    passport_number: str
+    date_of_birth: datetime
 
 
 class BookingCreate(BookingBase):
-    tour_company_id: int
-    tour_category_id: int
     tour_id: int
 
 
 class BookingUpdate(BaseModel):
-    secret_code: str = Field(..., min_length=4)
+    secret_code: str
 
     person_number: Optional[int] = None
     name: Optional[str] = None
     surname: Optional[str] = None
     patronymic: Optional[str] = None
+
     phone: Optional[str] = None
     email: Optional[str] = None
     passport_number: Optional[str] = None
@@ -193,9 +194,7 @@ class BookingUpdate(BaseModel):
 class BookingOut(BookingBase):
     id: int
     tour_id: int
-    tour_company_id: int
-    tour_category_id: int
     secret_code: str
-    booking_date: Optional[datetime]
+    booking_date: datetime
 
     model_config = {"from_attributes": True}
