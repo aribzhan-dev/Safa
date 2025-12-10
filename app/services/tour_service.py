@@ -211,6 +211,7 @@ async def create_tour(db: AsyncSession, current_company: TourCompanies, data: To
         price=data.price,
         departure_date=data.departure_date,
         return_date=data.return_date,
+        duration=data.duration,
         is_new=data.is_new,
         max_people=data.max_people,
         location=data.location
