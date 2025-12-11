@@ -28,7 +28,7 @@ class TourCompanies(Base):
 
     categories: Mapped[List["TourCategories"]] = relationship(back_populates="tour_company")
     guides: Mapped[List["TourGuides"]] = relationship(back_populates="tour_company")
-    tours: Mapped[List["Tours"]] = relationship(back_populates="tour_company")
+    tour: Mapped[List["Tour"]] = relationship(back_populates="tour_company")
 
     def __repr__(self):
         return f"<TourCompany -- {self.comp_name}>"
@@ -42,7 +42,7 @@ class TourCategories(Base):
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), default=StatusEnum.active)
 
     tour_company: Mapped["TourCompanies"] = relationship(back_populates="categories")
-    tours: Mapped[List["Tours"]] = relationship(back_populates="tour_category")
+    tour: Mapped[List["Tour"]] = relationship(back_populates="tour_category")
 
     def __repr__(self):
         return f"<TourCategories -- {self.title}>"
@@ -59,14 +59,14 @@ class TourGuides(Base):
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), default=StatusEnum.active)
 
     tour_company: Mapped["TourCompanies"] = relationship(back_populates="guides")
-    tours: Mapped[List["Tours"]] = relationship(back_populates="tour_guid")
+    tour: Mapped[List["Tour"]] = relationship(back_populates="tour_guid")
 
     def __repr__(self):
         return f"<TourGuides -- {self.name} {self.surname}>"
 
 
 
-class Tours(Base):
+class Tour(Base):
     tour_company_id: Mapped[int] = mapped_column(ForeignKey("tour_companies.id"), nullable=False)
     tour_category_id: Mapped[int] = mapped_column(ForeignKey("tour_categories.id"), nullable=False)
     tour_guid_id: Mapped[int] = mapped_column(ForeignKey("tour_guides.id"), nullable=False)
@@ -81,9 +81,9 @@ class Tours(Base):
     location: Mapped[str] = mapped_column(String(255), nullable=False)
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), default=StatusEnum.active)
 
-    tour_company: Mapped["TourCompanies"] = relationship(back_populates="tours")
-    tour_category: Mapped["TourCategories"] = relationship(back_populates="tours")
-    tour_guid: Mapped["TourGuides"] = relationship(back_populates="tours")
+    tour_company: Mapped["TourCompanies"] = relationship(back_populates="tour")
+    tour_category: Mapped["TourCategories"] = relationship(back_populates="tour")
+    tour_guid: Mapped["TourGuides"] = relationship(back_populates="tour")
     files: Mapped[List["TourFiles"]] = relationship(back_populates="tour")
     booking: Mapped[List["BookingTour"]] = relationship(back_populates="tour")
 
@@ -96,7 +96,7 @@ class TourFiles(Base):
 
     file_name: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    tour: Mapped[Tours] = relationship(back_populates="files")
+    tour: Mapped[Tour] = relationship(back_populates="files")
 
     def __repr__(self):
         return f"<TourFile -- {self.file_name}>"
@@ -117,7 +117,7 @@ class BookingTour(Base):
     booking_date: Mapped[datetime] = mapped_column(DateTime(), nullable=False, server_default=func.now())
     secret_code: Mapped[str] = mapped_column(String(20), nullable=False)
 
-    tour: Mapped[Tours] = relationship(back_populates="booking")
+    tour: Mapped[Tour] = relationship(back_populates="booking")
 
     def __repr__(self):
         return f"<BookingTour -- {self.name} -- {self.surname}>"
