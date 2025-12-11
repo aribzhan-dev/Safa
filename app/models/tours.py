@@ -18,6 +18,7 @@ class StatusEnum(IntEnum):
 
 
 class TourCompanies(Base):
+    __tablename__ = "tour_companies"
     username = mapped_column(String(50), unique=True, nullable=False)
     password_hash = mapped_column(String(255), nullable=False)
 
@@ -36,6 +37,7 @@ class TourCompanies(Base):
 
 
 class TourCategories(Base):
+    __tablename__ = "tour_categories"
     tour_company_id = mapped_column(ForeignKey("tour_companies.id"), nullable=False)
 
     title = mapped_column(String(200), nullable=False)
@@ -50,6 +52,7 @@ class TourCategories(Base):
 
 
 class TourGuides(Base):
+    __tablename__ = "tour_guides"
     tour_company_id = mapped_column(ForeignKey("tour_companies.id"), nullable=False)
 
     name = mapped_column(String(100), nullable=False)
@@ -67,6 +70,8 @@ class TourGuides(Base):
 
 
 class Tours(Base):
+    __tablename__ = "tours"
+
     tour_company_id = mapped_column(ForeignKey("tour_companies.id"), nullable=False)
     tour_category_id = mapped_column(ForeignKey("tour_categories.id"), nullable=False)
     tour_guid_id = mapped_column(ForeignKey("tour_guides.id"), nullable=False)

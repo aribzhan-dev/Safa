@@ -24,9 +24,29 @@ class StatusEnum(IntEnum):
     archived = 2
 
 
+class Company(Base):
+    __tablename__ = "companies"
+
+    title: Mapped[str] = mapped_column(String(100), nullable=False)
+    why_collecting: Mapped[str] = mapped_column(Text, nullable=False)
+    image: Mapped[str] = mapped_column(String(255), nullable=False)
+    payment: Mapped[str] = mapped_column(String(300), nullable=False, unique=True)
+    status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), default=StatusEnum.active)
+
+    auth: Mapped["CompanyAuth"] = relationship(back_populates="company", uselist=False)
+    help_categories: Mapped[List["HelpCategory"]] = relationship(back_populates="company")
+    materials_status: Mapped[List["MaterialsStatus"]] = relationship(back_populates="company")
+    help_requests: Mapped[List["HelpRequest"]] = relationship(back_populates="company")
+    notes: Mapped[List["Note"]] = relationship(back_populates="company")
+    posts: Mapped[List["Post"]] = relationship(back_populates="company")
+
+    def __repr__(self):
+        return f"<Company {self.title}>"
+
+
 class CompanyAuth(Base):
     company_id: Mapped[int] = mapped_column(
-        ForeignKey("company.id"),
+        ForeignKey("companies.id"),
         nullable=False,
         unique=True,
     )
@@ -55,27 +75,12 @@ class Language(Base):
     def __repr__(self):
         return f"<Language {self.code} {self.title}>"
 
-class Company(Base):
-    title: Mapped[str] = mapped_column(String(100), nullable=False)
-    why_collecting: Mapped[str] = mapped_column(Text, nullable=False)
-    image: Mapped[str] = mapped_column(String(255), nullable=False)
-    payment: Mapped[str] = mapped_column(String(300), nullable=False, unique=True)
-    status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), default=StatusEnum.active)
 
-    auth: Mapped["CompanyAuth"] = relationship(back_populates="company", uselist=False)
-    help_categories: Mapped[List["HelpCategory"]] = relationship(back_populates="company")
-    materials_status: Mapped[List["MaterialsStatus"]] = relationship(back_populates="company")
-    help_requests: Mapped[List["HelpRequest"]] = relationship(back_populates="company")
-    notes: Mapped[List["Note"]] = relationship(back_populates="company")
-    posts: Mapped[List["Post"]] = relationship(back_populates="company")
-
-    def __repr__(self):
-        return f"<Company {self.title}>"
 
 
 class Post(Base):
-    company_id: Mapped[int] = mapped_column(ForeignKey("company.id"), nullable=False)
-    language_id: Mapped[int] = mapped_column(ForeignKey("language.id"), nullable=False)
+    company_id: Mapped[int] = mapped_column(ForeignKey("companies.id"), nullable=False)
+    language_id: Mapped[int] = mapped_column(ForeignKey("languages.id"), nullable=False)
     image: Mapped[str] = mapped_column(String(255), nullable=False)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)
@@ -90,8 +95,8 @@ class Post(Base):
 
 
 class Note(Base):
-    company_id: Mapped[int] = mapped_column(ForeignKey("company.id"), nullable=False)
-    language_id: Mapped[int] = mapped_column(ForeignKey("language.id"), nullable=False)
+    company_id: Mapped[int] = mapped_column(ForeignKey("companies.id"), nullable=False)
+    language_id: Mapped[int] = mapped_column(ForeignKey("languages.id"), nullable=False)
     image: Mapped[str] = mapped_column(String(255), nullable=False)
     note_type: Mapped[TypeChoices] = mapped_column(SqlEnum(TypeChoices), nullable=False)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
@@ -109,8 +114,9 @@ class Note(Base):
 
 
 class MaterialsStatus(Base):
-    company_id: Mapped[int] = mapped_column(ForeignKey("company.id"), nullable=False)
-    language_id: Mapped[int] = mapped_column(ForeignKey("language.id"), nullable=False)
+    __tablename__ = "materials_status"
+    company_id: Mapped[int] = mapped_column(ForeignKey("companies.id"), nullable=False)
+    language_id: Mapped[int] = mapped_column(ForeignKey("languages.id"), nullable=False)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), nullable=False)
 
@@ -123,8 +129,9 @@ class MaterialsStatus(Base):
 
 
 class HelpCategory(Base):
-    company_id: Mapped[int] = mapped_column(ForeignKey("company.id"), nullable=False)
-    language_id: Mapped[int] = mapped_column(ForeignKey("language.id"), nullable=False)
+    __tablename__ = "help_categories"
+    company_id: Mapped[int] = mapped_column(ForeignKey("companies.id"), nullable=False)
+    language_id: Mapped[int] = mapped_column(ForeignKey("languages.id"), nullable=False)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     is_other: Mapped[bool] = mapped_column(Boolean, nullable=False)
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), nullable=False, default=StatusEnum.active)
@@ -139,9 +146,10 @@ class HelpCategory(Base):
 
 
 class HelpRequest(Base):
-    company_id: Mapped[int] = mapped_column(ForeignKey("company.id"), nullable=False)
+    __tablename__ = "help_requests"
+    company_id: Mapped[int] = mapped_column(ForeignKey("companies.id"), nullable=False)
     materials_status_id: Mapped[int] = mapped_column(ForeignKey("materials_status.id"), nullable=False)
-    help_category_id: Mapped[int] = mapped_column(ForeignKey("help_category.id"), nullable=False)
+    help_category_id: Mapped[int] = mapped_column(ForeignKey("help_categories.id"), nullable=False)
 
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     surname: Mapped[str] = mapped_column(String(100), nullable=False)
@@ -166,7 +174,8 @@ class HelpRequest(Base):
 
 
 class HelpRequestFile(Base):
-    help_request_id: Mapped[int] = mapped_column(ForeignKey("help_request.id"), nullable=False)
+    __tablename__ = "help_request_files"
+    help_request_id: Mapped[int] = mapped_column(ForeignKey("help_requests.id"), nullable=False)
     filename: Mapped[str] = mapped_column(String(255), nullable=False)
 
     help_request: Mapped[HelpRequest] = relationship(back_populates="help_requests_file")
