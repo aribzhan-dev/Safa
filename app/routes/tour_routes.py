@@ -20,50 +20,13 @@ from app.core.tour_deps import get_current_company
 
 router = APIRouter(prefix="/tour", tags=["Tour System"])
 
-
-
-@router.post("/company", summary="Create Tour Company")
-async def register_company(data: TourCompanyCreate, db: AsyncSession = Depends(get_session)):
-    return await create_company(db, data)
-
-
-
-@router.post("/auth/login", summary="Login company (JWT)")
-async def login(data: dict, db: AsyncSession = Depends(get_session)):
-    if "username" not in data or "password" not in data:
-        raise HTTPException(400, "username and password are required")
-
-    return await login_company(db, data["username"], data["password"])
-
-
-
+# GET
 @router.get("/company/me", summary="Get current company info")
 async def get_my_company(
     db: AsyncSession = Depends(get_session),
     current_company = Depends(get_current_company)
 ):
     return await get_company(db, current_company.id)
-
-
-
-@router.patch("/company/me", summary="Update current company")
-async def update_my_company(
-    data: TourCompanyUpdate,
-    db: AsyncSession = Depends(get_session),
-    current_company = Depends(get_current_company)
-):
-    return await update_company(db, current_company.id, data)
-
-
-
-
-@router.post("/categories", summary="Create category")
-async def create_cat(
-    data: TourCategoryCreate,
-    db: AsyncSession = Depends(get_session),
-    current_company = Depends(get_current_company)
-):
-    return await create_category(db, current_company, data)
 
 
 @router.get("/categories", summary="List categories")
@@ -84,27 +47,6 @@ async def get_cat(
 
 
 
-@router.patch("/categories/{cat_id}", summary="Update category")
-async def patch_cat(
-    cat_id: int,
-    data: TourCategoryUpdate,
-    db: AsyncSession = Depends(get_session),
-    current_company = Depends(get_current_company)
-):
-    return await update_category(db, cat_id, data, current_company)
-
-
-
-
-@router.post("/guides", summary="Create guide")
-async def create_new_guide(
-    data: TourGuideCreate,
-    db: AsyncSession = Depends(get_session),
-    current_company = Depends(get_current_company)
-):
-    return await create_guide(db, current_company, data)
-
-
 @router.get("/guides", summary="List guides")
 async def list_guides(
     db: AsyncSession = Depends(get_session),
@@ -121,27 +63,6 @@ async def get_one_guide(
     current_company = Depends(get_current_company)
 ):
     return await get_guide(db, guide_id, current_company)
-
-
-@router.patch("/guides/{guide_id}", summary="Update guide")
-async def patch_guide(
-    guide_id: int,
-    data: TourGuideUpdate,
-    db: AsyncSession = Depends(get_session),
-    current_company = Depends(get_current_company)
-):
-    return await update_guide(db, guide_id, data, current_company)
-
-
-
-@router.post("/tours", summary="Create tour")
-async def create_new_tour(
-    data: TourCreate,
-    db: AsyncSession = Depends(get_session),
-    current_company = Depends(get_current_company)
-):
-    return await create_tour(db, current_company, data)
-
 
 
 @router.get("/tours", summary="List tours")
@@ -163,14 +84,62 @@ async def get_one_tour(
 
 
 
-@router.patch("/tours/{tour_id}", summary="Update tour")
-async def patch_tour(
+
+@router.get("/tours/{tour_id}/files", summary="List tour files")
+async def list_tour_files(
     tour_id: int,
-    data: TourUpdate,
     db: AsyncSession = Depends(get_session),
     current_company = Depends(get_current_company)
 ):
-    return await update_tour(db, tour_id, data, current_company)
+    return await get_tour_files(db, tour_id, current_company)
+
+
+
+# POST
+
+@router.post("/company", summary="Create Tour Company")
+async def register_company(data: TourCompanyCreate, db: AsyncSession = Depends(get_session)):
+    return await create_company(db, data)
+
+
+
+@router.post("/auth/login", summary="Login company (JWT)")
+async def login(data: dict, db: AsyncSession = Depends(get_session)):
+    if "username" not in data or "password" not in data:
+        raise HTTPException(400, "username and password are required")
+
+    return await login_company(db, data["username"], data["password"])
+
+
+
+@router.post("/categories", summary="Create category")
+async def create_cat(
+    data: TourCategoryCreate,
+    db: AsyncSession = Depends(get_session),
+    current_company = Depends(get_current_company)
+):
+    return await create_category(db, current_company, data)
+
+
+
+@router.post("/guides", summary="Create guide")
+async def create_new_guide(
+    data: TourGuideCreate,
+    db: AsyncSession = Depends(get_session),
+    current_company = Depends(get_current_company)
+):
+    return await create_guide(db, current_company, data)
+
+
+
+@router.post("/tours", summary="Create tour")
+async def create_new_tour(
+    data: TourCreate,
+    db: AsyncSession = Depends(get_session),
+    current_company = Depends(get_current_company)
+):
+    return await create_tour(db, current_company, data)
+
 
 
 @router.post("/tours/{tour_id}/files", summary="Create tour file")
@@ -183,14 +152,56 @@ async def create_new_tour_file(
     return await create_tour_file(db, tour_id, data, current_company)
 
 
-@router.get("/tours/{tour_id}/files", summary="List tour files")
-async def list_tour_files(
-    tour_id: int,
+# PATCH
+
+
+@router.patch("/company/me", summary="Update current company")
+async def update_my_company(
+    data: TourCompanyUpdate,
     db: AsyncSession = Depends(get_session),
     current_company = Depends(get_current_company)
 ):
-    return await get_tour_files(db, tour_id, current_company)
+    return await update_company(db, current_company.id, data)
 
+
+
+
+
+@router.patch("/categories/{cat_id}", summary="Update category")
+async def patch_cat(
+    cat_id: int,
+    data: TourCategoryUpdate,
+    db: AsyncSession = Depends(get_session),
+    current_company = Depends(get_current_company)
+):
+    return await update_category(db, cat_id, data, current_company)
+
+
+
+
+@router.patch("/guides/{guide_id}", summary="Update guide")
+async def patch_guide(
+    guide_id: int,
+    data: TourGuideUpdate,
+    db: AsyncSession = Depends(get_session),
+    current_company = Depends(get_current_company)
+):
+    return await update_guide(db, guide_id, data, current_company)
+
+
+
+
+@router.patch("/tours/{tour_id}", summary="Update tour")
+async def patch_tour(
+    tour_id: int,
+    data: TourUpdate,
+    db: AsyncSession = Depends(get_session),
+    current_company = Depends(get_current_company)
+):
+    return await update_tour(db, tour_id, data, current_company)
+
+
+# DELETE
 
 @router.delete("/tour_files/{file_id}", summary="Delete tour file")
 async def delete_tour_file_route(
