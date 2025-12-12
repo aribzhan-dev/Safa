@@ -11,7 +11,7 @@ from app.core.sadaqa_deps import get_current_sadaqa_company
 from app.services.sadaqa_service import (
     create_material_status,
     get_material_statuses,
-    update_material_status
+    update_material_status,
 )
 
 router = APIRouter(prefix="/company/materials")

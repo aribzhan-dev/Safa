@@ -209,6 +209,37 @@ async def get_material_statuses(db: AsyncSession, company: Company):
     return r.scalars().all()
 
 
+
+async def update_material_status(
+    db: AsyncSession,
+    ms_id: int,
+    data: MaterialsStatusUpdate,
+    company: Company
+):
+    result = await db.execute(
+        select(MaterialsStatus).where(
+            MaterialsStatus.id == ms_id,
+            MaterialsStatus.company_id == company.id
+        )
+    )
+    material_status = result.scalar_one_or_none()
+
+    if not material_status:
+        raise HTTPException(
+            status_code=404,
+            detail="Materials status not found or no permission"
+        )
+
+    for key, value in data.model_dump(exclude_unset=True).items():
+        setattr(material_status, key, value)
+
+    await db.commit()
+    await db.refresh(material_status)
+
+    return material_status
+
+
+
 async def create_help_category(db: AsyncSession, data: HelpCategoryCreate, company: Company):
     cat = HelpCategory(
         company_id=company.id,
@@ -227,9 +258,38 @@ async def get_help_categories(db: AsyncSession, company: Company):
     return r.scalars().all()
 
 
+async def update_help_category(
+    db: AsyncSession,
+    category_id: int,
+    data: HelpCategoryUpdate,
+    company: Company
+):
+    result = await db.execute(
+        select(HelpCategory).where(
+            HelpCategory.id == category_id,
+            HelpCategory.company_id == company.id
+        )
+    )
+    category = result.scalar_one_or_none()
+
+    if not category:
+        raise HTTPException(
+            status_code=404,
+            detail="Help category not found or no permission"
+        )
+
+    for key, value in data.model_dump(exclude_unset=True).items():
+        setattr(category, key, value)
+
+    await db.commit()
+    await db.refresh(category)
+
+    return category
 
 
-async def public_create_help_request(db: AsyncSession, data: HelpRequestCreate):
+
+
+async def create_help_request(db: AsyncSession, data: HelpRequestCreate):
     hr = HelpRequest(**data.model_dump())
     db.add(hr)
     await db.commit()

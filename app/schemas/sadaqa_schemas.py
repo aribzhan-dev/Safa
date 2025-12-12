@@ -133,6 +133,9 @@ class MaterialsStatusUpdate(BaseModel):
     title: Optional[str] = None
 
 
+
+
+
 class MaterialsStatusOut(MaterialsStatusBase):
     id: int
 
