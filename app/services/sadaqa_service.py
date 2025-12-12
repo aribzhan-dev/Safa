@@ -19,36 +19,7 @@ from app.schemas.sadaqa_schemas import (
 )
 from app.core.security import hash_password, verify_password
 from app.core.jwt import create_tokens
-import uuid
-
-
-
-IMAGE_EXT = {"jpg", "jpeg", "png", "gif", "bmp", "webp"}
-VIDEO_EXT = {"mp4", "mov", "avi", "mkv", "webm"}
-AUDIO_EXT = {"mp3", "ogg"}
-FILE_EXT = {"pdf", "doc", "docx", "xls", "xlsx", "zip"}
-
-
-def generate_filename(original_name: str) -> str:
-    ext = original_name.split(".")[-1].lower()
-    return f"{uuid.uuid4().hex}.{ext}"
-
-
-def build_file_path(original_name: str) -> str:
-    ext = original_name.split(".")[-1].lower()
-
-    if ext in IMAGE_EXT:
-        folder = "/media/img/"
-    elif ext in VIDEO_EXT:
-        folder = "/media/video/"
-    elif ext in AUDIO_EXT:
-        folder = "/media/audio/"
-    else:
-        folder = "/media/file/"
-
-    return folder + generate_filename(original_name)
-
-
+from app.utils.file import save_upload_file
 
 async def create_company(db: AsyncSession, data: CompanyCreate):
     company = Company(
@@ -296,13 +267,14 @@ async def update_help_request(db: AsyncSession, hr_id: int, data: HelpRequestUpd
 
 
 async def create_help_request_file(
-    db: AsyncSession,
-    data: HelpRequestFileCreate,
+    db,
+    help_request_id: int,
+    upload_file,
     company: Company
 ):
     r = await db.execute(
         select(HelpRequest).where(
-            HelpRequest.id == data.help_request_id,
+            HelpRequest.id == help_request_id,
             HelpRequest.company_id == company.id
         )
     )
@@ -311,12 +283,13 @@ async def create_help_request_file(
     if not req:
         raise HTTPException(404, "Help request not found or no permission")
 
-    file_path = build_file_path(data.filename)
+    file_path = await save_upload_file(upload_file)
 
     file = HelpRequestFile(
-        help_request_id=data.help_request_id,
+        help_request_id=help_request_id,
         filename=file_path
     )
+
     db.add(file)
     await db.commit()
     await db.refresh(file)
