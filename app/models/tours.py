@@ -16,7 +16,6 @@ class StatusEnum(IntEnum):
     archived = 2
 
 
-
 class TourCompanies(Base):
     __tablename__ = "tour_companies"
     username = mapped_column(String(50), unique=True, nullable=False)
@@ -35,7 +34,6 @@ class TourCompanies(Base):
         return f"<TourCompany -- {self.comp_name}>"
 
 
-
 class TourCategories(Base):
     __tablename__ = "tour_categories"
     tour_company_id = mapped_column(ForeignKey("tour_companies.id"), nullable=False)
@@ -48,7 +46,6 @@ class TourCategories(Base):
 
     def __repr__(self):
         return f"<TourCategories -- {self.title}>"
-
 
 
 class TourGuides(Base):
@@ -66,7 +63,6 @@ class TourGuides(Base):
 
     def __repr__(self):
         return f"<TourGuides -- {self.name} {self.surname}>"
-
 
 
 class Tours(Base):
@@ -106,7 +102,6 @@ class TourFiles(Base):
         return f"<TourFile -- {self.file_name}>"
 
 
-
 class BookingTour(Base):
     tour_id = mapped_column(ForeignKey("tours.id"), nullable=False)
 
@@ -125,4 +120,3 @@ class BookingTour(Base):
 
     def __repr__(self):
         return f"<BookingTour -- {self.name} -- {self.surname}>"
-

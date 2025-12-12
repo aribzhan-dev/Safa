@@ -11,7 +11,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 120
 REFRESH_TOKEN_EXPIRE_DAYS = 30
 
 
-
 def create_access_token(data: dict):
     payload = data.copy()
     payload.update({
@@ -35,7 +34,6 @@ def create_tokens(data: dict):
         create_access_token(data),
         create_refresh_token(data)
     )
-
 
 
 def decode_access_token(token: str):

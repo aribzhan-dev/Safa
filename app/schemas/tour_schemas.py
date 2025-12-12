@@ -4,13 +4,10 @@ from typing import Optional
 from enum import IntEnum
 
 
-
-
 class StatusEnum(IntEnum):
     active = 0
     inactive = 1
     archived = 2
-
 
 
 class TourCompanyBase(BaseModel):
@@ -39,12 +36,9 @@ class TourCompanyOut(TourCompanyBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-
 class TourCompanyLogin(BaseModel):
     username: str
     password: str
-
-
 
 
 class TourCategoryBase(BaseModel):
@@ -63,7 +57,6 @@ class TourCategoryOut(TourCategoryBase):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
-
 
 
 class TourGuideBase(BaseModel):
@@ -88,8 +81,6 @@ class TourGuideOut(TourGuideBase):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
-
-
 
 
 class TourBase(BaseModel):
@@ -144,7 +135,6 @@ class TourOut(TourBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-
 class TourFileBase(BaseModel):
     file_name: str
 
@@ -152,12 +142,12 @@ class TourFileBase(BaseModel):
 class TourFileCreate(TourFileBase):
     pass
 
+
 class TourFileOut(TourFileBase):
     id: int
     tour_id: int
 
     model_config = ConfigDict(from_attributes=True)
-
 
 
 class BookingBase(BaseModel):

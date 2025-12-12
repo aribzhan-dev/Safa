@@ -35,7 +35,6 @@ async def create_company(db: AsyncSession, data: CompanyCreate):
     db.add(company)
     await db.flush()
 
-
     auth = CompanyAuth(
         company_id=company.id,
         login=data.login,
@@ -84,8 +83,6 @@ async def update_company(db: AsyncSession, company_id: int, data: CompanyUpdate)
     return company
 
 
-
-
 async def create_language(db: AsyncSession, data: LanguageCreate):
     lang = Language(**data.model_dump())
     db.add(lang)
@@ -97,7 +94,6 @@ async def create_language(db: AsyncSession, data: LanguageCreate):
 async def get_languages(db: AsyncSession):
     r = await db.execute(select(Language))
     return r.scalars().all()
-
 
 
 async def create_post(db: AsyncSession, data: PostCreate, company: Company):
@@ -137,8 +133,6 @@ async def update_post(db: AsyncSession, post_id: int, data: PostUpdate, company:
     await db.commit()
     await db.refresh(post)
     return post
-
-
 
 
 async def create_note(db: AsyncSession, data: NoteCreate, company: Company):
@@ -183,8 +177,6 @@ async def update_note(db: AsyncSession, note_id: int, data: NoteUpdate, company:
     return note
 
 
-
-
 async def create_material_status(db: AsyncSession, data: MaterialsStatusCreate, company: Company):
     ms = MaterialsStatus(
         company_id=company.id,
@@ -224,8 +216,6 @@ async def update_material_status(db: AsyncSession, ms_id: int, data: MaterialsSt
     await db.commit()
     await db.refresh(ms)
     return ms
-
-
 
 
 async def create_help_category(db: AsyncSession, data: HelpCategoryCreate, company: Company):
@@ -270,8 +260,6 @@ async def update_help_category(db: AsyncSession, cat_id: int, data: HelpCategory
     return cat
 
 
-
-
 async def create_help_request(db: AsyncSession, data: HelpRequestCreate, company: Company):
     hr = HelpRequest(
         company_id=company.id,
@@ -311,9 +299,7 @@ async def update_help_request(db: AsyncSession, hr_id: int, data: HelpRequestUpd
     return hr
 
 
-
 async def create_help_request_file(db: AsyncSession, data: HelpRequestFileCreate, company: Company):
-
     result = await db.execute(
         select(HelpRequest).where(
             HelpRequest.id == data.help_request_id,

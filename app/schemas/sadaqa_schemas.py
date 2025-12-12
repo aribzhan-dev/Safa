@@ -3,11 +3,13 @@ from datetime import datetime
 from typing import Optional
 from enum import Enum, IntEnum
 
+
 class TypeChoices(str, Enum):
     normal = "Обычный"
     medium = "Средний"
     urgent = "Срочный"
     very_urgent = "Очень срочный"
+
 
 class StatusEnum(IntEnum):
     active = 0
@@ -19,14 +21,15 @@ class LanguageBase(BaseModel):
     code: str = Field(..., min_length=2, max_length=10)
     title: str = Field(..., min_length=1, max_length=200)
 
+
 class LanguageCreate(LanguageBase):
     pass
+
 
 class LanguageOut(LanguageBase):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
-
 
 
 class CompanyBase(BaseModel):
@@ -35,13 +38,16 @@ class CompanyBase(BaseModel):
     image: str = Field(..., max_length=255)
     payment: str = Field(..., min_length=1, max_length=300)
 
+
 class CompanyCreate(CompanyBase):
     login: str = Field(..., min_length=3, max_length=100)
     password: str = Field(..., min_length=4)
 
+
 class CompanyLogin(BaseModel):
     login: str = Field(..., min_length=3, max_length=100)
     password: str = Field(..., min_length=3, max_length=100)
+
 
 class CompanyUpdate(BaseModel):
     title: Optional[str] = None
@@ -49,11 +55,11 @@ class CompanyUpdate(BaseModel):
     image: Optional[str] = None
     payment: Optional[str] = None
 
+
 class CompanyOut(CompanyBase):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
-
 
 
 class PostBase(BaseModel):
@@ -62,8 +68,10 @@ class PostBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=100)
     content: str
 
+
 class PostCreate(PostBase):
     pass
+
 
 class PostUpdate(BaseModel):
     language_id: Optional[int] = None
@@ -71,12 +79,12 @@ class PostUpdate(BaseModel):
     title: Optional[str] = None
     content: Optional[str] = None
 
+
 class PostOut(PostBase):
     id: int
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
-
 
 
 class NoteBase(BaseModel):
@@ -89,8 +97,10 @@ class NoteBase(BaseModel):
     goal_money: float
     collected_money: float
 
+
 class NoteCreate(NoteBase):
     pass
+
 
 class NoteUpdate(BaseModel):
     language_id: Optional[int] = None
@@ -102,6 +112,7 @@ class NoteUpdate(BaseModel):
     goal_money: Optional[float] = None
     collected_money: Optional[float] = None
 
+
 class NoteOut(NoteBase):
     id: int
 
@@ -112,12 +123,15 @@ class MaterialsStatusBase(BaseModel):
     language_id: int
     title: str
 
+
 class MaterialsStatusCreate(MaterialsStatusBase):
     pass
+
 
 class MaterialsStatusUpdate(BaseModel):
     language_id: Optional[int] = None
     title: Optional[str] = None
+
 
 class MaterialsStatusOut(MaterialsStatusBase):
     id: int
@@ -125,25 +139,26 @@ class MaterialsStatusOut(MaterialsStatusBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-
 class HelpCategoryBase(BaseModel):
     language_id: int
     title: str
     is_other: bool
 
+
 class HelpCategoryCreate(HelpCategoryBase):
     pass
+
 
 class HelpCategoryUpdate(BaseModel):
     language_id: Optional[int] = None
     title: Optional[str] = None
     is_other: Optional[bool] = None
 
+
 class HelpCategoryOut(HelpCategoryBase):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
-
 
 
 class HelpRequestBase(BaseModel):
@@ -176,6 +191,7 @@ class HelpRequestBase(BaseModel):
 class HelpRequestCreate(HelpRequestBase):
     pass
 
+
 class HelpRequestUpdate(BaseModel):
     name: Optional[str] = None
     surname: Optional[str] = None
@@ -190,6 +206,7 @@ class HelpRequestUpdate(BaseModel):
     help_reason: Optional[str] = None
     received_other_help: Optional[bool] = None
 
+
 class HelpRequestOut(HelpRequestBase):
     id: int
     created_at: datetime
@@ -197,12 +214,13 @@ class HelpRequestOut(HelpRequestBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-
 class HelpRequestFileBase(BaseModel):
     filename: str
 
+
 class HelpRequestFileCreate(HelpRequestFileBase):
     pass
+
 
 class HelpRequestFileOut(HelpRequestFileBase):
     id: int

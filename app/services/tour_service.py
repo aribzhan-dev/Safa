@@ -16,7 +16,7 @@ from app.schemas.tour_schemas import (
 )
 from app.core.security import hash_password, verify_password
 from app.core.jwt import create_tokens
-import string, datetime,random
+import string, datetime, random
 
 
 async def create_company(db: AsyncSession, data: TourCompanyCreate):
@@ -89,9 +89,7 @@ async def update_company(db: AsyncSession, company_id: int, data: TourCompanyUpd
     return company
 
 
-
 async def create_category(db: AsyncSession, current_company: TourCompanies, data: TourCategoryCreate):
-
     category = TourCategories(
         tour_company_id=current_company.id,
         title=data.title
@@ -104,7 +102,6 @@ async def create_category(db: AsyncSession, current_company: TourCompanies, data
 
 
 async def get_category(db: AsyncSession, category_id: int, current_company: TourCompanies):
-
     result = await db.execute(
         select(TourCategories).where(
             TourCategories.id == category_id,
@@ -120,7 +117,6 @@ async def get_category(db: AsyncSession, category_id: int, current_company: Tour
 
 
 async def get_categories(db: AsyncSession, current_company: TourCompanies):
-
     result = await db.execute(
         select(TourCategories).where(
             TourCategories.tour_company_id == current_company.id
@@ -130,7 +126,6 @@ async def get_categories(db: AsyncSession, current_company: TourCompanies):
 
 
 async def update_category(db: AsyncSession, category_id: int, data: TourCategoryUpdate, current_company: TourCompanies):
-
     category = await get_category(db, category_id, current_company)
 
     for key, value in data.model_dump(exclude_unset=True).items():
@@ -141,9 +136,7 @@ async def update_category(db: AsyncSession, category_id: int, data: TourCategory
     return category
 
 
-
 async def create_guide(db: AsyncSession, current_company: TourCompanies, data: TourGuideCreate):
-
     guide = TourGuides(
         tour_company_id=current_company.id,
         name=data.name,
@@ -159,7 +152,6 @@ async def create_guide(db: AsyncSession, current_company: TourCompanies, data: T
 
 
 async def get_guide(db: AsyncSession, guide_id: int, current_company: TourCompanies):
-
     result = await db.execute(
         select(TourGuides).where(
             TourGuides.id == guide_id,
@@ -175,7 +167,6 @@ async def get_guide(db: AsyncSession, guide_id: int, current_company: TourCompan
 
 
 async def get_guides(db: AsyncSession, current_company: TourCompanies):
-
     result = await db.execute(
         select(TourGuides).where(
             TourGuides.tour_company_id == current_company.id
@@ -185,7 +176,6 @@ async def get_guides(db: AsyncSession, current_company: TourCompanies):
 
 
 async def update_guide(db: AsyncSession, guide_id: int, data: TourGuideUpdate, current_company: TourCompanies):
-
     guide = await get_guide(db, guide_id, current_company)
 
     for key, value in data.model_dump(exclude_unset=True).items():
@@ -196,10 +186,7 @@ async def update_guide(db: AsyncSession, guide_id: int, data: TourGuideUpdate, c
     return guide
 
 
-
-
 async def create_tour(db: AsyncSession, current_company: TourCompanies, data: TourCreate):
-
     category = await get_category(db, data.tour_category_id, current_company)
     guide = await get_guide(db, data.tour_guid_id, current_company)
 
@@ -224,7 +211,6 @@ async def create_tour(db: AsyncSession, current_company: TourCompanies, data: To
 
 
 async def get_tour(db: AsyncSession, tour_id: int, current_company: TourCompanies):
-
     result = await db.execute(
         select(Tours).where(
             Tours.id == tour_id,
@@ -240,7 +226,6 @@ async def get_tour(db: AsyncSession, tour_id: int, current_company: TourCompanie
 
 
 async def get_tours(db: AsyncSession, current_company: TourCompanies):
-
     result = await db.execute(
         select(Tours).where(
             Tours.tour_company_id == current_company.id
@@ -250,7 +235,6 @@ async def get_tours(db: AsyncSession, current_company: TourCompanies):
 
 
 async def update_tour(db: AsyncSession, tour_id: int, data: TourUpdate, current_company: TourCompanies):
-
     tour = await get_tour(db, tour_id, current_company)
     payload = data.model_dump(exclude_unset=True)
 
@@ -269,10 +253,10 @@ async def update_tour(db: AsyncSession, tour_id: int, data: TourUpdate, current_
 
 
 async def create_tour_file(
-    db: AsyncSession,
-    tour_id: int,
-    data: TourFileCreate,
-    company: TourCompanies
+        db: AsyncSession,
+        tour_id: int,
+        data: TourFileCreate,
+        company: TourCompanies
 ):
     await get_tour(db, tour_id, company)
 
@@ -287,11 +271,10 @@ async def create_tour_file(
     return file
 
 
-
 async def get_tour_files(
-    db: AsyncSession,
-    tour_id: int,
-    company: TourCompanies
+        db: AsyncSession,
+        tour_id: int,
+        company: TourCompanies
 ):
     await get_tour(db, tour_id, company)
 
@@ -303,11 +286,10 @@ async def get_tour_files(
     return result.scalars().all()
 
 
-
 async def delete_tour_file(
-    db: AsyncSession,
-    file_id: int,
-    company: TourCompanies
+        db: AsyncSession,
+        file_id: int,
+        company: TourCompanies
 ):
     result = await db.execute(
         select(TourFiles).where(TourFiles.id == file_id)
@@ -323,7 +305,6 @@ async def delete_tour_file(
     await db.commit()
 
     return {"detail": "File deleted"}
-
 
 
 def generate_secret_code() -> str:
@@ -360,7 +341,6 @@ async def create_booking(db: AsyncSession, data: BookingCreate):
     return booking
 
 
-
 async def update_booking(db: AsyncSession, booking_id: int, data: BookingUpdate):
     result = await db.execute(
         select(BookingTour).where(BookingTour.id == booking_id)
@@ -381,7 +361,6 @@ async def update_booking(db: AsyncSession, booking_id: int, data: BookingUpdate)
     await db.commit()
     await db.refresh(booking)
     return
-
 
 
 async def get_company_bookings(db: AsyncSession, company: TourCompanies):

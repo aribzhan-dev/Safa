@@ -60,12 +60,10 @@ class CompanyAuth(Base):
         return f"<CompanyAuth {self.login}>"
 
 
-
 class Language(Base):
     code: Mapped[str] = mapped_column(String(10), nullable=False, unique=True)
     title: Mapped[str] = mapped_column(String(200), nullable=False)
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), default=StatusEnum.active)
-
 
     posts: Mapped[List["Post"]] = relationship(back_populates="language")
     notes: Mapped[List["Note"]] = relationship(back_populates="language")
@@ -74,8 +72,6 @@ class Language(Base):
 
     def __repr__(self):
         return f"<Language {self.code} {self.title}>"
-
-
 
 
 class Post(Base):
@@ -140,7 +136,6 @@ class HelpCategory(Base):
     language: Mapped["Language"] = relationship(back_populates="help_categories")
     help_requests: Mapped[List["HelpRequest"]] = relationship(back_populates="help_category")
 
-
     def __repr__(self):
         return f"<HelpCategory {self.title}>"
 
@@ -180,13 +175,5 @@ class HelpRequestFile(Base):
 
     help_request: Mapped[HelpRequest] = relationship(back_populates="help_requests_file")
 
-
     def __repr__(self):
         return f"<HelpRequestFile {self.filename}"
-
-
-
-
-
-
-
