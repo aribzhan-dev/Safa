@@ -4,7 +4,7 @@ from app.core.sadaqa_deps import get_current_sadaqa_company
 from app.core.db import get_session
 from app.schemas.sadaqa_schemas import CompanyCreate, CompanyLogin, CompanyUpdate, CompanyOut, TokenResponse
 from app.services.sadaqa_service import create_company, login_company, update_company
-from app.core.jwt import decode_refresh_token, create_refresh_token, create_access_token
+from app.core.jwt import decode_refresh_token, create_tokens
 
 router = APIRouter(prefix="/company")
 
@@ -24,11 +24,10 @@ async def refresh_token(refresh_token: str):
     if not payload:
         raise HTTPException(401, "Invalid refresh token")
 
-    new_access = create_access_token({"user_id": payload["user_id"]})
-    new_refresh = create_refresh_token({"user_id": payload["user_id"]})
+    access, refresh = create_tokens({"company_id": payload["company_id"]})
     return {
-        "access_token": new_access,
-        "refresh_token": new_refresh,
+        "access_token": access,
+        "refresh_token": refresh,
         "token_type": "Bearer"
     }
 
