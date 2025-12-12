@@ -17,7 +17,7 @@ from app.services.sadaqa_service import (
 router = APIRouter(prefix="/company/materials")
 
 
-@router.post("/", response_model=MaterialsStatusOut)
+@router.post("", response_model=MaterialsStatusOut)
 async def create_my_material_status(
         data: MaterialsStatusCreate,
         db: AsyncSession = Depends(get_session),
@@ -26,7 +26,7 @@ async def create_my_material_status(
     return await create_material_status(db, data, company)
 
 
-@router.get("/", response_model=list[MaterialsStatusOut])
+@router.get("", response_model=list[MaterialsStatusOut])
 async def get_my_materials(
         db: AsyncSession = Depends(get_session),
         company=Depends(get_current_sadaqa_company)

@@ -28,7 +28,7 @@ from app.services.sadaqa_service import (
     create_help_request_file
 )
 
-router = APIRouter(prefix="/sadaqa", tags=["Sadaqa"])
+router = APIRouter(prefix="/sadaqa_routes", tags=["Sadaqa"])
 
 
 @router.post("/company/create", response_model=CompanyOut)

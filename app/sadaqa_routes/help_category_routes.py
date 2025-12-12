@@ -16,7 +16,7 @@ from app.services.sadaqa_service import (
 
 router = APIRouter(prefix="/company/categories")
 
-@router.post("/", response_model=HelpCategoryOut)
+@router.post("", response_model=HelpCategoryOut)
 async def create_my_category(
         data: HelpCategoryCreate,
         db: AsyncSession = Depends(get_session),
@@ -25,7 +25,7 @@ async def create_my_category(
     return await create_help_category(db, data, company)
 
 
-@router.get("/", response_model=list[HelpCategoryOut])
+@router.get("", response_model=list[HelpCategoryOut])
 async def get_categories(
         db: AsyncSession = Depends(get_session),
         company=Depends(get_current_sadaqa_company)

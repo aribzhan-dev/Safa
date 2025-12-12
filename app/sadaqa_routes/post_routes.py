@@ -7,7 +7,7 @@ from app.services.sadaqa_service import create_post, get_posts, update_post
 
 router = APIRouter(prefix="/company/posts")
 
-@router.post("/", response_model=PostOut)
+@router.post("", response_model=PostOut)
 async def create_my_post(
         data: PostCreate,
         db: AsyncSession = Depends(get_session),
@@ -16,7 +16,7 @@ async def create_my_post(
     return await create_post(db, data, company)
 
 
-@router.get("/", response_model=list[PostOut])
+@router.get("", response_model=list[PostOut])
 async def get_my_posts(
         db: AsyncSession = Depends(get_session),
         company=Depends(get_current_sadaqa_company)

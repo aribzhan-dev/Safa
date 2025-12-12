@@ -10,7 +10,7 @@ from app.services.sadaqa_service import create_help_request_file
 
 router = APIRouter(prefix="/company/help-request/files")
 
-@router.post("/", response_model=HelpRequestFileOut)
+@router.post("", response_model=HelpRequestFileOut)
 async def upload_help_file(
         data: HelpRequestFileCreate,
         db: AsyncSession = Depends(get_session),

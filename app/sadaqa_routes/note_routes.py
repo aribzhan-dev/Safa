@@ -9,7 +9,7 @@ from app.services.sadaqa_service import create_note, get_notes, update_note
 router = APIRouter(prefix="/company/notes")
 
 
-@router.post("/", response_model=NoteOut)
+@router.post("", response_model=NoteOut)
 async def create_my_note(
         data: NoteCreate,
         db: AsyncSession = Depends(get_session),
@@ -18,7 +18,7 @@ async def create_my_note(
     return await create_note(db, data, company)
 
 
-@router.get("/", response_model=list[NoteOut])
+@router.get("", response_model=list[NoteOut])
 async def get_my_notes(
         db: AsyncSession = Depends(get_session),
         company=Depends(get_current_sadaqa_company)

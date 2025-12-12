@@ -1,15 +1,15 @@
 from fastapi import FastAPI
 import uvicorn
 from app.routes.tour_routes import router as tour_routes
-from app.routes.sadaqa_routes import router as sadaqa_routes
+from app.sadaqa_routes import sadaqa_router
+
 
 app = FastAPI(title="Safa API")
 
-app.include_router(tour_routes, prefix="/api")
-app.include_router(sadaqa_routes, prefix="/api")
+app.include_router(tour_routes, prefix="/api/tour")
+app.include_router(sadaqa_router, prefix="/api/sadaqa")
 
-
-@app.get("api/")
+@app.get("/api/")
 async def root():
     return {"message": "FastAPI is working!"}
 

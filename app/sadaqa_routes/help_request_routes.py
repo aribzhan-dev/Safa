@@ -17,7 +17,7 @@ from app.services.sadaqa_service import (
 
 router = APIRouter(prefix="/company/help-requests")
 
-@router.post("/", response_model=HelpRequestOut)
+@router.post("", response_model=HelpRequestOut)
 async def create_my_help_request(
         data: HelpRequestCreate,
         db: AsyncSession = Depends(get_session),
@@ -25,7 +25,7 @@ async def create_my_help_request(
 ):
     return await create_help_request(db, data, company)
 
-@router.get("/", response_model=list[HelpRequestOut])
+@router.get("", response_model=list[HelpRequestOut])
 async def list_my_help_requests(
         db: AsyncSession = Depends(get_session),
         company=Depends(get_current_sadaqa_company)
