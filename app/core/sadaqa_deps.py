@@ -1,4 +1,5 @@
 from fastapi import Depends, HTTPException, Header
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -6,15 +7,23 @@ from app.core.jwt import decode_access_token
 from app.core.db import get_session
 from app.models.sadaqa import CompanyAuth, Company
 
+security = HTTPBearer(auto_error=False)
+
 
 async def get_current_sadaqa_company(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
     authorization: str | None = Header(default=None),
     db: AsyncSession = Depends(get_session)
 ):
-    if not authorization:
-        raise HTTPException(status_code=401, detail="Access token required")
+    token: str | None = None
 
-    token = authorization.strip()
+    if credentials:
+        token = credentials.credentials
+    elif authorization:
+        token = authorization.strip()
+
+    if not token:
+        raise HTTPException(status_code=401, detail="Access token required")
 
     payload = decode_access_token(token)
 
@@ -32,7 +41,6 @@ async def get_current_sadaqa_company(
 
     if not auth.is_active:
         raise HTTPException(status_code=403, detail="Company is inactive")
-
 
     result = await db.execute(
         select(Company).where(Company.id == auth.company_id)
