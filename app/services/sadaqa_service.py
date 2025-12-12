@@ -1,14 +1,12 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from fastapi import HTTPException
-
 from app.models.sadaqa import (
     Company, CompanyAuth,
     Language, Post, Note,
     MaterialsStatus, HelpCategory,
     HelpRequest, HelpRequestFile
 )
-
 from app.schemas.sadaqa_schemas import (
     LanguageCreate,
     CompanyCreate, CompanyUpdate,
@@ -19,9 +17,36 @@ from app.schemas.sadaqa_schemas import (
     HelpRequestCreate, HelpRequestUpdate,
     HelpRequestFileCreate
 )
-
 from app.core.security import hash_password, verify_password
 from app.core.jwt import create_tokens
+import os, uuid
+
+IMAGE_EXT = {"jpg", "jpeg", "png", "gif", "bmp", "webp"}
+FILE_EXT = {"pdf", "doc", "docx", "xls", "xlsx", "zip"}
+VIDEO_EXT = {"mp4", "mov", "avi", "mkv", "webm", "flv"}
+AUDIO_EXT = {"mp3", "ogg"}
+
+def generate_filename(original_name: str) -> str:
+    ext = original_name.split(".")[-1].lower()
+    new_name = f"{uuid.uuid4().hex}.{ext}"
+    return new_name
+
+def build_file_path(original_name: str) -> str:
+    ext = original_name.split(".")[-1].lower()
+
+    if ext in IMAGE_EXT:
+        folder = "/media/img/"
+    if ext in VIDEO_EXT:
+        folder = "/media/video/"
+    if ext in AUDIO_EXT:
+        folder = "/media/audio/"
+    else:
+        folder = "/media/file/"
+
+    unique_name = generate_filename(original_name)
+    return folder + unique_name
+
+
 
 
 async def create_company(db: AsyncSession, data: CompanyCreate):
@@ -299,34 +324,28 @@ async def update_help_request(db: AsyncSession, hr_id: int, data: HelpRequestUpd
     return hr
 
 
-async def create_help_request_file(db: AsyncSession, data: HelpRequestFileCreate, company: Company):
+async def create_help_request_file(
+    db: AsyncSession,
+    data: HelpRequestFileCreate,
+    company: Company
+):
+
     result = await db.execute(
         select(HelpRequest).where(
             HelpRequest.id == data.help_request_id,
             HelpRequest.company_id == company.id
         )
     )
-    hr = result.scalar_one_or_none()
-
-    if not hr:
-        raise HTTPException(404, "HelpRequest not found or no permission")
-
+    req = result.scalar_one_or_none()
+    if not req:
+        raise HTTPException(404, "Help request not found or no permission")
+    file_path = build_file_path(data.filename)
     file = HelpRequestFile(
         help_request_id=data.help_request_id,
-        filename=data.filename
+        filename=file_path
     )
 
     db.add(file)
     await db.commit()
     await db.refresh(file)
     return file
-
-
-async def get_help_request_files(db: AsyncSession, help_request: HelpRequest):
-    r = await db.execute(
-        select(HelpRequestFile).where(
-            HelpRequestFile.help_request_id == help_request.id
-        )
-    )
-
-    return r.scalars().all()
