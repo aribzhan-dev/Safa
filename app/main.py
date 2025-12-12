@@ -5,6 +5,7 @@ from app.sadaqa_routes import sadaqa_router
 
 
 app = FastAPI(title="Safa API")
+app.security = [{"HTTPBearer": []}]
 
 app.include_router(sadaqa_router, prefix="/api/sadaqa")
 

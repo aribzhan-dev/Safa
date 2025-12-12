@@ -82,7 +82,8 @@ async def login_company(db: AsyncSession, login: str, password: str):
         raise HTTPException(401, "Invalid login or password")
 
     access, refresh = create_tokens({
-        "company_auth_id": auth.id
+        "company_auth_id": auth.id,
+        "role": "company"
     })
 
     return {

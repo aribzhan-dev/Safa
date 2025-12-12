@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException, Header
+from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -9,27 +9,26 @@ from app.models.sadaqa import CompanyAuth, Company
 
 security = HTTPBearer(auto_error=False)
 
-
 async def get_current_sadaqa_company(
     credentials: HTTPAuthorizationCredentials = Depends(security),
-    authorization: str | None = Header(default=None),
     db: AsyncSession = Depends(get_session)
 ):
-    token: str | None = None
 
-    if credentials:
-        token = credentials.credentials
-    elif authorization:
-        token = authorization.strip()
+    if not credentials:
+        raise HTTPException(status_code=401, detail="Authorization required")
 
-    if not token:
-        raise HTTPException(status_code=401, detail="Access token required")
+    token = credentials.credentials
+
 
     payload = decode_access_token(token)
 
+    role = payload.get("role")
+    if role != "company":
+        raise HTTPException(status_code=403, detail="Company access required")
+
     auth_id = payload.get("company_auth_id")
     if not auth_id:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        raise HTTPException(status_code=401, detail="Invalid token payload")
 
     result = await db.execute(
         select(CompanyAuth).where(CompanyAuth.id == auth_id)
@@ -37,10 +36,11 @@ async def get_current_sadaqa_company(
     auth = result.scalar_one_or_none()
 
     if not auth:
-        raise HTTPException(status_code=401, detail="Auth record not found")
+        raise HTTPException(status_code=401, detail="Auth not found")
 
     if not auth.is_active:
         raise HTTPException(status_code=403, detail="Company is inactive")
+
 
     result = await db.execute(
         select(Company).where(Company.id == auth.company_id)
