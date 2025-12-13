@@ -14,7 +14,7 @@ from app.services.sadaqa_service import (
     update_help_category
 )
 
-router = APIRouter(prefix="/company/categories")
+router = APIRouter(prefix="/sadaqa/company/categories")
 
 @router.post("", response_model=HelpCategoryOut)
 async def create_my_category(

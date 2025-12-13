@@ -14,7 +14,7 @@ from app.services.sadaqa_service import (
 )
 
 router = APIRouter(
-    prefix="/company",
+    prefix="/sadaqa/company",
     tags=["Company"]
 )
 

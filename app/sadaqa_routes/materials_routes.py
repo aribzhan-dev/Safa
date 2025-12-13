@@ -14,7 +14,7 @@ from app.services.sadaqa_service import (
     update_material_status,
 )
 
-router = APIRouter(prefix="/company/materials")
+router = APIRouter(prefix="/sadaqa/company/materials")
 
 
 @router.post("", response_model=MaterialsStatusOut)

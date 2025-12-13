@@ -4,7 +4,7 @@ from app.core.db import get_session
 from app.core.sadaqa_deps import get_current_sadaqa_company
 from app.services.sadaqa_service import create_help_request_file
 
-router = APIRouter(prefix="/company/help-requests", tags=["HelpRequestFile"])
+router = APIRouter(prefix="/sadaqa/company/help-requests", tags=["HelpRequestFile"])
 
 
 @router.post("/{help_request_id}/files")

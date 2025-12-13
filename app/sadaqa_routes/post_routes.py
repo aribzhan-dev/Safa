@@ -5,7 +5,7 @@ from app.core.db import get_session
 from app.core.sadaqa_deps import get_current_sadaqa_company
 from app.services.sadaqa_service import create_post, get_posts, update_post
 
-router = APIRouter(prefix="/company/posts")
+router = APIRouter(prefix="/sadaqa/company/posts")
 
 @router.post("", response_model=PostOut)
 async def create_my_post(

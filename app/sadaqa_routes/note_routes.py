@@ -6,7 +6,7 @@ from app.core.db import get_session
 from app.core.sadaqa_deps import get_current_sadaqa_company
 from app.services.sadaqa_service import create_note, get_notes, update_note
 
-router = APIRouter(prefix="/company/notes")
+router = APIRouter(prefix="/sadaqa/company/notes")
 
 
 @router.post("", response_model=NoteOut)

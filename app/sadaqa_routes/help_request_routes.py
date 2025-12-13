@@ -15,7 +15,7 @@ from app.services.sadaqa_service import (
 )
 
 
-router = APIRouter(prefix="/company/help-requests")
+router = APIRouter(prefix="/sadaqa/company/help-requests")
 
 @router.post("", response_model=HelpRequestOut)
 async def create_my_help_request(
