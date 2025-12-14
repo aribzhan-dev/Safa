@@ -11,7 +11,6 @@ async def get_public_posts(db: AsyncSession):
             Post.content,
             Post.image,
             Post.language_id
-        )
-        .where(Post.status == StatusEnum.active)
+        ).where(Post.status == StatusEnum.active)
     )
-    return r.all()
+    return r.mappings().all()

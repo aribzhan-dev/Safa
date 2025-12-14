@@ -20,4 +20,4 @@ async def get_public_help_categories(
         query = query.where(HelpCategory.language_id == language_id)
 
     result = await db.execute(query)
-    return result.all()
+    return result.mappings().all()

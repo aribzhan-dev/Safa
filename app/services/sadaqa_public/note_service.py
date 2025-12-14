@@ -13,7 +13,6 @@ async def get_public_notes(db: AsyncSession):
             Note.goal_money,
             Note.collected_money,
             Note.language_id
-        )
-        .where(Note.status == StatusEnum.active)
+        ).where(Note.status == StatusEnum.active)
     )
-    return r.all()
+    return r.mappings().all()
