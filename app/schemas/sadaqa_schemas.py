@@ -194,6 +194,12 @@ class HelpCategoryOut(HelpCategoryBase):
 
     model_config = ConfigDict(from_attributes=True)
 
+class HelpCategoryPublicOut(BaseModel):
+    id: int
+    title: str
+    language_id: int
+    is_other: Optional[bool] = None
+
 
 class HelpRequestBase(BaseModel):
     name: str
