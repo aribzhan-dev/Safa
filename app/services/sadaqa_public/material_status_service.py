@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from app.models.sadaqa import MaterialsStatus
+from app.models.sadaqa import MaterialsStatus, StatusEnum
 
 
 async def get_public_material_statuses(db: AsyncSession):
@@ -11,6 +11,6 @@ async def get_public_material_statuses(db: AsyncSession):
             MaterialsStatus.title,
             MaterialsStatus.language_id
         )
-        .where(MaterialsStatus.status == 0)
+        .where(MaterialsStatus.status == StatusEnum.active)
     )
     return r.all()

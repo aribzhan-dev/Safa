@@ -37,6 +37,8 @@ async def login_company_route(
     return await login_company(db, data.login, data.password)
 
 
+
+
 @router.put("/me", response_model=CompanyOut)
 async def update_my_company(
     data: CompanyUpdate,

@@ -1,7 +1,7 @@
 from fastapi import  HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from app.models.sadaqa import Post
+from app.models.sadaqa import Post, StatusEnum
 
 async def get_public_posts(db: AsyncSession):
     r = await db.execute(
@@ -12,6 +12,6 @@ async def get_public_posts(db: AsyncSession):
             Post.image,
             Post.language_id
         )
-        .where(Post.status == 0)
+        .where(Post.status == StatusEnum.active)
     )
     return r.all()

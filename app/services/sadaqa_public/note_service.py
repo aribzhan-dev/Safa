@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from app.models.sadaqa import Note
+from app.models.sadaqa import Note, StatusEnum
 
 async def get_public_notes(db: AsyncSession):
     r = await db.execute(
@@ -14,6 +14,6 @@ async def get_public_notes(db: AsyncSession):
             Note.collected_money,
             Note.language_id
         )
-        .where(Note.status == 0)
+        .where(Note.status == StatusEnum.active)
     )
     return r.all()

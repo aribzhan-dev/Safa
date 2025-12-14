@@ -9,9 +9,9 @@ app.security = [{"HTTPBearer": []}]
 app.include_router(private_sadaqa_router, prefix="/api/sadaqa/private")
 app.include_router(public_sadaqa_router, prefix="/api/sadaqa/public")
 
-@app.get("/api/")
-async def root():
-    return {"message": "FastAPI is working!"}
+# @app.get("/api/")
+# async def root():
+#     return {"message": "FastAPI is working!"}
 
 
 if __name__ == "__main__":

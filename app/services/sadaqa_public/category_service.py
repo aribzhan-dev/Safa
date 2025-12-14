@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from app.models.sadaqa import HelpCategory
+from app.models.sadaqa import HelpCategory, StatusEnum
 
 
 async def get_public_help_categories(
@@ -13,7 +13,7 @@ async def get_public_help_categories(
         HelpCategory.language_id,
         HelpCategory.is_other
     ).where(
-        HelpCategory.status == 0
+        HelpCategory.status == StatusEnum.active
     )
 
     if language_id:
