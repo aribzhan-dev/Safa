@@ -1,21 +1,15 @@
-
-import uuid
 import os
+import uuid
 from fastapi import UploadFile, HTTPException
+
+BASE_MEDIA_PATH = "media"
 
 IMAGE_EXT = {"jpg", "jpeg", "png", "gif", "bmp", "webp"}
 VIDEO_EXT = {"mp4", "mov", "avi", "mkv", "webm"}
-AUDIO_EXT = {"mp3", "ogg"}
-FILE_EXT  = {"pdf", "doc", "docx", "xls", "xlsx", "zip"}
+AUDIO_EXT = {"mp3", "ogg", "wav"}
+FILE_EXT = {"pdf", "doc", "docx", "xls", "xlsx", "zip"}
 
-MEDIA_ROOT = "media"
-
-
-def get_extension(filename: str) -> str:
-    return filename.split(".")[-1].lower()
-
-
-def resolve_folder(ext: str) -> str:
+def _get_folder(ext: str) -> str:
     if ext in IMAGE_EXT:
         return "img"
     if ext in VIDEO_EXT:
@@ -27,20 +21,24 @@ def resolve_folder(ext: str) -> str:
     raise HTTPException(400, "Unsupported file type")
 
 
-def generate_filename(ext: str) -> str:
-    return f"{uuid.uuid4().hex}.{ext}"
+async def upload_file(file: UploadFile) -> str:
+    if not file.filename:
+        raise HTTPException(400, "File is required")
 
+    ext = file.filename.split(".")[-1].lower()
+    folder = _get_folder(ext)
 
-async def save_upload_file(file: UploadFile) -> str:
-    ext = get_extension(file.filename)
-    folder = resolve_folder(ext)
-    filename = generate_filename(ext)
+    filename = f"{uuid.uuid4().hex}.{ext}"
+    dir_path = os.path.join(BASE_MEDIA_PATH, folder)
+    os.makedirs(dir_path, exist_ok=True)
 
-    os.makedirs(f"{MEDIA_ROOT}/{folder}", exist_ok=True)
-    path = f"{MEDIA_ROOT}/{folder}/{filename}"
+    file_path = os.path.join(dir_path, filename)
 
-    with open(path, "wb") as f:
-        content = await file.read()
-        f.write(content)
+    try:
+        with open(file_path, "wb") as f:
+            content = await file.read()
+            f.write(content)
+    except Exception:
+        raise HTTPException(500, "Failed to save file")
 
-    return f"/{path}"
+    return f"/media/{folder}/{filename}"
