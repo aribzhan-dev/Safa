@@ -191,7 +191,11 @@ async def update_note(db: AsyncSession, note_id: int, data: NoteUpdate, company:
 
 
 
-async def create_material_status(db: AsyncSession, data: MaterialsStatusCreate, company: Company):
+async def create_material_status(
+        db: AsyncSession,
+        data: MaterialsStatusCreate,
+        company: Company
+):
     ms = MaterialsStatus(
         company_id=company.id,
         **data.model_dump()
@@ -202,7 +206,10 @@ async def create_material_status(db: AsyncSession, data: MaterialsStatusCreate, 
     return ms
 
 
-async def get_material_statuses(db: AsyncSession, company: Company):
+async def get_material_statuses(
+        db: AsyncSession,
+        company: Company
+):
     r = await db.execute(
         select(MaterialsStatus).where(MaterialsStatus.company_id == company.id)
     )
@@ -240,7 +247,11 @@ async def update_material_status(
 
 
 
-async def create_help_category(db: AsyncSession, data: HelpCategoryCreate, company: Company):
+async def create_help_category(
+        db: AsyncSession,
+        data: HelpCategoryCreate,
+        company: Company
+):
     cat = HelpCategory(
         company_id=company.id,
         **data.model_dump()
@@ -251,7 +262,10 @@ async def create_help_category(db: AsyncSession, data: HelpCategoryCreate, compa
     return cat
 
 
-async def get_help_categories(db: AsyncSession, company: Company):
+async def get_help_categories(
+        db: AsyncSession,
+        company: Company
+):
     r = await db.execute(
         select(HelpCategory).where(HelpCategory.company_id == company.id)
     )
