@@ -87,6 +87,15 @@ class PostOut(PostBase):
     model_config = ConfigDict(from_attributes=True)
 
 
+class PostPublicOut(BaseModel):
+    id: int
+    title: str
+    content: str
+    image: str
+    language_id: int
+
+
+
 class NoteBase(BaseModel):
     language_id: int
     image: str
@@ -119,6 +128,16 @@ class NoteOut(NoteBase):
     model_config = ConfigDict(from_attributes=True)
 
 
+class NotePublicOut(BaseModel):
+    id: int
+    title: str
+    content: str
+    image: str
+    goal_money: float
+    collected_money: float
+    language_id: int
+
+
 class MaterialsStatusBase(BaseModel):
     language_id: int
     title: str
@@ -140,6 +159,11 @@ class MaterialsStatusOut(MaterialsStatusBase):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
+
+class MaterialsStatusPublicOut(BaseModel):
+    id: int
+    title: str
+    language_id: int
 
 
 class HelpCategoryBase(BaseModel):
