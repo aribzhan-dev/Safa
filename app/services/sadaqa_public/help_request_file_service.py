@@ -31,29 +31,4 @@ async def create_help_request_file(
 
 
 
-async def get_company_help_request_files(
-    db: AsyncSession,
-    help_request_id: int,
-    company: Company
-):
-    r = await db.execute(
-        select(HelpRequest).where(
-            HelpRequest.id == help_request_id,
-            HelpRequest.company_id == company.id
-        )
-    )
-    hr = r.scalar_one_or_none()
-
-    if not hr:
-        raise HTTPException(
-            status_code=404,
-            detail="Help request not found or no permission"
-        )
-
-    r = await db.execute(
-        select(HelpRequestFile).where(
-            HelpRequestFile.help_request_id == help_request_id
-        )
-    )
-    return r.scalars().all()
 

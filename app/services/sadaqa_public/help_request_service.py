@@ -15,13 +15,3 @@ async def create_help_request(
     return hr
 
 
-async def get_company_help_requests(
-    db: AsyncSession,
-    company_id: int
-):
-    r = await db.execute(
-        select(HelpRequest).where(
-            HelpRequest.company_id == company_id
-        )
-    )
-    return r.scalars().all()
