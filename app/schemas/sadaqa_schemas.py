@@ -56,6 +56,13 @@ class CompanyUpdate(BaseModel):
     payment: Optional[str] = None
 
 
+class CompanyPublicOut(CompanyBase):
+    id: int
+    title: str
+    why_collecting: str
+    image: str
+
+
 class CompanyOut(CompanyBase):
     id: int
 
