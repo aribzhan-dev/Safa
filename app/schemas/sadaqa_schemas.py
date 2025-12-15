@@ -201,6 +201,22 @@ class HelpCategoryPublicOut(BaseModel):
     is_other: Optional[bool] = None
 
 
+
+class HelpRequestFileBase(BaseModel):
+    filename: str
+
+
+class HelpRequestFileCreate(HelpRequestFileBase):
+    pass
+
+
+class HelpRequestFileOut(HelpRequestFileBase):
+    id: int
+    help_request_id: int
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class HelpRequestBase(BaseModel):
     name: str
     surname: str
@@ -247,26 +263,29 @@ class HelpRequestUpdate(BaseModel):
     received_other_help: Optional[bool] = None
 
 
-class HelpRequestOut(HelpRequestBase):
+class HelpRequestCommon(BaseModel):
+    name: str
+    surname: str
+    age: int
+    phone_number: str
+    materials_status_id: int
+    help_category_id: int
+    other_category: Optional[str] = None
+    child_num: int
+    address: str
+    iin: str
+    help_reason: str
+    received_other_help: bool
+
+class HelpRequestOut(HelpRequestCommon):
     id: int
     created_at: datetime
+    files: list[HelpRequestFileOut] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)
 
 
-class HelpRequestFileBase(BaseModel):
-    filename: str
 
-
-class HelpRequestFileCreate(HelpRequestFileBase):
-    pass
-
-
-class HelpRequestFileOut(HelpRequestFileBase):
-    id: int
-    help_request_id: int
-
-    model_config = ConfigDict(from_attributes=True)
 
 
 class TokenResponse(BaseModel):

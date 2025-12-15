@@ -114,7 +114,7 @@ class MaterialsStatus(Base):
     company_id: Mapped[int] = mapped_column(ForeignKey("companies.id"), nullable=False)
     language_id: Mapped[int] = mapped_column(ForeignKey("languages.id"), nullable=False)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
-    status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), nullable=False)
+    status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), nullable=False, default=StatusEnum.active)
 
     company: Mapped["Company"] = relationship(back_populates="materials_status")
     language: Mapped["Language"] = relationship(back_populates="materials_status")

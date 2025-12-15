@@ -15,7 +15,7 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=list[HelpRequestOut])
+@router.get("/", response_model=list[HelpRequestOut],)
 async def my_requests(
     db: AsyncSession = Depends(get_session),
     company=Depends(get_current_sadaqa_company)

@@ -13,4 +13,4 @@ async def get_public_material_statuses(db: AsyncSession):
         )
         .where(MaterialsStatus.status == StatusEnum.active)
     )
-    return r.all()
+    return r.mappings().all()

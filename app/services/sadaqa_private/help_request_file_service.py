@@ -1,15 +1,16 @@
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 from sqlalchemy import select
-from app.models.sadaqa import HelpRequest, HelpRequestFile, Company
-
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.models.sadaqa import Company, HelpRequest
 
 async def get_files_by_company(
     db: AsyncSession,
     company: Company
 ):
     r = await db.execute(
-        select(HelpRequestFile)
-        .join(HelpRequest)
+        select(HelpRequest)
+        .options(selectinload(HelpRequest.files))
         .where(HelpRequest.company_id == company.id)
     )
     return r.scalars().all()
+
