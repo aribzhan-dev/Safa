@@ -29,3 +29,5 @@ alembic/
 alembic.ini
 migrations/
 versions/
+
+media
