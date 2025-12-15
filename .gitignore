@@ -30,4 +30,4 @@ alembic.ini
 migrations/
 versions/
 
-media
+media/
