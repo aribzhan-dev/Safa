@@ -58,6 +58,10 @@ async def login_company(db: AsyncSession, username: str, password: str):
     }
 
 
+
+
+
+
 async def update_company(db: AsyncSession, company: TourCompanies, data: TourCompanyUpdate):
     payload = data.model_dump(exclude_unset=True)
 
