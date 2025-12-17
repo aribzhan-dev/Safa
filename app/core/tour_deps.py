@@ -1,30 +1,29 @@
-from fastapi import Depends, HTTPException, Header
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+
 from app.core.jwt import decode_access_token
 from app.core.db import get_session
 from app.models.tours import TourCompanies
 
+security = HTTPBearer(auto_error=False)
 
-async def get_current_company(
-        Authorization: str = Header(None),
-        db: AsyncSession = Depends(get_session)
+async def get_current_tour_company(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: AsyncSession = Depends(get_session)
 ):
-    if not Authorization:
-        raise HTTPException(401, "Authorization header missing")
+    if not credentials:
+        raise HTTPException(401, "Authorization required")
 
-    if not Authorization.startswith("Bearer "):
-        raise HTTPException(401, "Invalid Authorization format. Use: Bearer <token>")
+    payload = decode_access_token(credentials.credentials)
 
-    token = Authorization.split(" ")[1].strip()
-    if not token:
-        raise HTTPException(401, "Token not provided")
-
-    payload = decode_access_token(token)
+    if payload.get("role") != "tour_company":
+        raise HTTPException(403, "Invalid role")
 
     company_id = payload.get("company_id")
     if not company_id:
-        raise HTTPException(401, "Invalid token: company_id missing")
+        raise HTTPException(401, "Invalid token")
 
     result = await db.execute(
         select(TourCompanies).where(TourCompanies.id == company_id)
@@ -32,6 +31,6 @@ async def get_current_company(
     company = result.scalar_one_or_none()
 
     if not company:
-        raise HTTPException(401, "Company not found or inactive")
+        raise HTTPException(401, "Company not found")
 
     return company
