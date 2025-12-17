@@ -36,3 +36,4 @@ async def get_company_detail(
         raise HTTPException(404, "Company not found")
 
     return company
+
