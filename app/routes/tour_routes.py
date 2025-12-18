@@ -15,7 +15,7 @@ from app.services.tour_service import (
     create_tour, get_tour, get_tours, update_tour,
     create_tour_file, delete_tour_file, get_tour_files,
 )
-from app.core.tour_deps import get_current_company
+from app.core.tour_deps import get_current_tour_company
 
 router = APIRouter(prefix="/tour", tags=["Tour System"])
 
@@ -24,7 +24,7 @@ router = APIRouter(prefix="/tour", tags=["Tour System"])
 @router.get("/company/me", summary="Get current company info")
 async def get_my_company(
         db: AsyncSession = Depends(get_session),
-        current_company=Depends(get_current_company)
+        current_company=Depends(get_current_tour_company)
 ):
     return await get_company(db, current_company.id)
 
@@ -32,7 +32,7 @@ async def get_my_company(
 @router.get("/categories", summary="List categories")
 async def list_categories(
         db: AsyncSession = Depends(get_session),
-        current_company=Depends(get_current_company)
+        current_company=Depends(get_current_tour_company)
 ):
     return await get_categories(db, current_company)
 
@@ -41,7 +41,7 @@ async def list_categories(
 async def get_cat(
         cat_id: int,
         db: AsyncSession = Depends(get_session),
-        current_company=Depends(get_current_company)
+        current_company=Depends(get_current_tour_company)
 ):
     return await get_category(db, cat_id, current_company)
 
@@ -49,7 +49,7 @@ async def get_cat(
 @router.get("/guides", summary="List guides")
 async def list_guides(
         db: AsyncSession = Depends(get_session),
-        current_company=Depends(get_current_company)
+        current_company=Depends(get_current_tour_company)
 ):
     return await get_guides(db, current_company)
 
@@ -58,7 +58,7 @@ async def list_guides(
 async def get_one_guide(
         guide_id: int,
         db: AsyncSession = Depends(get_session),
-        current_company=Depends(get_current_company)
+        current_company=Depends(get_current_tour_company)
 ):
     return await get_guide(db, guide_id, current_company)
 
@@ -66,7 +66,7 @@ async def get_one_guide(
 @router.get("/tours", summary="List tours")
 async def list_tours(
         db: AsyncSession = Depends(get_session),
-        current_company=Depends(get_current_company)
+        current_company=Depends(get_current_tour_company)
 ):
     return await get_tours(db, current_company)
 
@@ -75,7 +75,7 @@ async def list_tours(
 async def get_one_tour(
         tour_id: int,
         db: AsyncSession = Depends(get_session),
-        current_company=Depends(get_current_company)
+        current_company=Depends(get_current_tour_company)
 ):
     return await get_tour(db, tour_id, current_company)
 
@@ -84,7 +84,7 @@ async def get_one_tour(
 async def list_tour_files(
         tour_id: int,
         db: AsyncSession = Depends(get_session),
-        current_company=Depends(get_current_company)
+        current_company=Depends(get_current_tour_company)
 ):
     return await get_tour_files(db, tour_id, current_company)
 
@@ -108,7 +108,7 @@ async def login(data: dict, db: AsyncSession = Depends(get_session)):
 async def create_cat(
         data: TourCategoryCreate,
         db: AsyncSession = Depends(get_session),
-        current_company=Depends(get_current_company)
+        current_company=Depends(get_current_tour_company)
 ):
     return await create_category(db, current_company, data)
 
@@ -117,7 +117,7 @@ async def create_cat(
 async def create_new_guide(
         data: TourGuideCreate,
         db: AsyncSession = Depends(get_session),
-        current_company=Depends(get_current_company)
+        current_company=Depends(get_current_tour_company)
 ):
     return await create_guide(db, current_company, data)
 
@@ -126,7 +126,7 @@ async def create_new_guide(
 async def create_new_tour(
         data: TourCreate,
         db: AsyncSession = Depends(get_session),
-        current_company=Depends(get_current_company)
+        current_company=Depends(get_current_tour_company)
 ):
     return await create_tour(db, current_company, data)
 
@@ -136,7 +136,7 @@ async def create_new_tour_file(
         tour_id: int,
         data: TourFileCreate,
         db: AsyncSession = Depends(get_session),
-        current_company=Depends(get_current_company)
+        current_company=Depends(get_current_tour_company)
 ):
     return await create_tour_file(db, tour_id, data, current_company)
 
@@ -148,7 +148,7 @@ async def create_new_tour_file(
 async def update_my_company(
         data: TourCompanyUpdate,
         db: AsyncSession = Depends(get_session),
-        current_company=Depends(get_current_company)
+        current_company=Depends(get_current_tour_company)
 ):
     return await update_company(db, current_company.id, data)
 
@@ -158,7 +158,7 @@ async def patch_cat(
         cat_id: int,
         data: TourCategoryUpdate,
         db: AsyncSession = Depends(get_session),
-        current_company=Depends(get_current_company)
+        current_company=Depends(get_current_tour_company)
 ):
     return await update_category(db, cat_id, data, current_company)
 
@@ -168,7 +168,7 @@ async def patch_guide(
         guide_id: int,
         data: TourGuideUpdate,
         db: AsyncSession = Depends(get_session),
-        current_company=Depends(get_current_company)
+        current_company=Depends(get_current_tour_company)
 ):
     return await update_guide(db, guide_id, data, current_company)
 
@@ -178,7 +178,7 @@ async def patch_tour(
         tour_id: int,
         data: TourUpdate,
         db: AsyncSession = Depends(get_session),
-        current_company=Depends(get_current_company)
+        current_company=Depends(get_current_tour_company)
 ):
     return await update_tour(db, tour_id, data, current_company)
 
@@ -189,6 +189,6 @@ async def patch_tour(
 async def delete_tour_file_route(
         file_id: int,
         db: AsyncSession = Depends(get_session),
-        current_company=Depends(get_current_company)
+        current_company=Depends(get_current_tour_company)
 ):
     return await delete_tour_file(db, file_id, current_company)
