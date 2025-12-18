@@ -17,7 +17,6 @@ async def create_help_request_file(
     if not hr:
         raise HTTPException(404, "Help request not found")
 
-
     file = HelpRequestFile(
         help_request_id=help_request_id,
         filename=file_path
