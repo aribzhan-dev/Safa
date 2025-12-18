@@ -17,10 +17,7 @@ async def get_current_sadaqa_company(
     if not credentials:
         raise HTTPException(status_code=401, detail="Authorization required")
 
-    token = credentials.credentials
-
-
-    payload = decode_access_token(token)
+    payload = decode_access_token(credentials.credentials)
 
     role = payload.get("role")
     if role != "company":
