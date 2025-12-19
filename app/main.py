@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 import uvicorn
 
 from app.routes.sadaqa.private_routes import router as private_sadaqa_router
@@ -15,6 +16,12 @@ app.include_router(public_sadaqa_router, prefix="/api/sadaqa/public")
 app.include_router(private_tours_router, prefix="/api/tour/private")
 app.include_router(public_tours_router, prefix="/api/tour/public")
 app.include_router(upload_file, prefix="/api")
+
+app.mount(
+    "/media",
+    StaticFiles(directory="media"),
+    name="media"
+)
 
 
 if __name__ == "__main__":
