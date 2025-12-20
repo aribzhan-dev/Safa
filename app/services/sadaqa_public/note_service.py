@@ -3,18 +3,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.models.sadaqa import Note, StatusEnum
 
-async def get_public_notes(db: AsyncSession):
-    r = await db.execute(
-        select(
-            Note.id,
-            Note.company_id,
-            Note.note_type,
-            Note.title,
-            Note.content,
-            Note.image,
-            Note.goal_money,
-            Note.collected_money,
-            Note.language_id
-        ).where(Note.status == StatusEnum.active)
-    )
-    return r.mappings().all()
+async def get_public_active_note(
+    db: AsyncSession,
+    company_id: int | None = None,
+    language_id: int | None = None,
+):
+    query = select(Note).where(Note.status == StatusEnum.active)
+
+    if company_id:
+        query = query.where(Note.company_id == company_id)
+
+    if language_id:
+        query = query.where(Note.language_id == language_id)
+
+    result = await db.execute(query)
+    return result.scalar_one_or_none()

@@ -31,7 +31,7 @@ async def my_notes(
     return await get_notes(db, company)
 
 
-@router.put("/{note_id}", response_model=NoteUpdate)
+@router.put("/{note_id}", response_model=NoteOut)
 async def update(
     note_id: int,
     data: NoteUpdate,
