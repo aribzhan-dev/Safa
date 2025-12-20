@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from app.models.sadaqa import Company, Note
 from app.core.db import get_session
 from app.core.sadaqa_deps import get_current_sadaqa_company
 from app.schemas.sadaqa_schemas import NoteCreate, NoteUpdate, NoteOut
 from app.services.sadaqa_private.note_service import (
-    create_note, get_notes, update_note
+    create_note, get_notes, update_note, delete_note
 )
 
 router = APIRouter(
@@ -39,3 +39,12 @@ async def update(
     company=Depends(get_current_sadaqa_company)
 ):
     return await update_note(db, note_id, data, company)
+
+
+@router.delete("/{note_id}")
+async def delete_my_note(
+    note_id: int,
+    db: AsyncSession = Depends(get_session),
+    company: Company = Depends(get_current_sadaqa_company)
+):
+    return await delete_note(db, note_id, company)

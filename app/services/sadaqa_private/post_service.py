@@ -54,3 +54,25 @@ async def update_post(
     await db.commit()
     await db.refresh(post)
     return post
+
+
+async def delete_post(
+    db: AsyncSession,
+    post_id: int,
+    company: Company
+):
+    r = await db.execute(
+        select(Post).where(
+            Post.id == post_id,
+            Post.company_id == company.id
+        )
+    )
+    post = r.scalar_one_or_none()
+
+    if not post:
+        raise HTTPException(404, "Post not found or no permission")
+
+    await db.delete(post)
+    await db.commit()
+
+    return {"detail": "Post deleted successfully"}

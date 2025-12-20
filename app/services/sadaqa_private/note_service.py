@@ -57,3 +57,25 @@ async def update_note(
     await db.commit()
     await db.refresh(note)
     return note
+
+
+async def delete_note(
+    db: AsyncSession,
+    note_id: int,
+    company: Company
+):
+    r = await db.execute(
+        select(Note).where(
+            Note.id == note_id,
+            Note.company_id == company.id
+        )
+    )
+    note = r.scalar_one_or_none()
+
+    if not note:
+        raise HTTPException(404, "Note not found or no permission")
+
+    await db.delete(note)
+    await db.commit()
+
+    return {"detail": "Note deleted successfully"}
