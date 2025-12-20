@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 
 from app.core.db import get_session
-from app.models.sadaqa import Company
+from app.models.sadaqa import Company, Post
 from app.schemas.sadaqa_schemas import CompanyPublicOut
 
 router = APIRouter(
@@ -35,5 +35,16 @@ async def get_company_detail(
     if not company:
         raise HTTPException(404, "Company not found")
 
-    return company
+
+    post_count_result = await db.execute(
+        select(func.count(Post.id)).where(
+            Post.company_id == company.id
+        )
+    )
+    post_count = post_count_result.scalar() or 0
+
+    return {
+        **company.__dict__,
+        "post_count": post_count
+    }
 

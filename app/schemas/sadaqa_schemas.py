@@ -61,6 +61,7 @@ class CompanyPublicOut(CompanyBase):
     title: str
     why_collecting: str
     image: str
+    post_count: int
 
 
 class CompanyOut(CompanyBase):
