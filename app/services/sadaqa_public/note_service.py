@@ -8,6 +8,7 @@ async def get_public_notes(db: AsyncSession):
         select(
             Note.id,
             Note.company_id,
+            Note.note_type,
             Note.title,
             Note.content,
             Note.image,

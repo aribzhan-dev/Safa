@@ -123,7 +123,7 @@ class NoteCreate(NoteBase):
 class NoteUpdate(BaseModel):
     language_id: Optional[int] = None
     image: Optional[str] = None
-    note_type: Optional[TypeChoices] = None
+    note_type: Optional[TypeChoices]
     title: Optional[str] = None
     content: Optional[str] = None
     address: Optional[str] = None
@@ -140,6 +140,7 @@ class NoteOut(NoteBase):
 class NotePublicOut(BaseModel):
     id: int
     company_id: int
+    note_type: Optional[TypeChoices]
     title: str
     content: str
     image: str
