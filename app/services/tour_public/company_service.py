@@ -12,4 +12,4 @@ async def get_public_companies(db: AsyncSession):
             TourCompanies.rating
         )
     )
-    return result.all()
+    return result.mappings().all()
