@@ -11,7 +11,8 @@ async def get_public_help_categories(
         HelpCategory.id,
         HelpCategory.title,
         HelpCategory.language_id,
-        HelpCategory.is_other
+        HelpCategory.is_other,
+        HelpCategory.content,
     ).where(
         HelpCategory.status == StatusEnum.active
     )

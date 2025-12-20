@@ -96,6 +96,7 @@ class PostOut(PostBase):
 
 class PostPublicOut(BaseModel):
     id: int
+    company_id: int
     title: str
     content: str
     image: str
@@ -112,6 +113,7 @@ class NoteBase(BaseModel):
     address: str
     goal_money: float
     collected_money: float
+
 
 
 class NoteCreate(NoteBase):
@@ -137,6 +139,7 @@ class NoteOut(NoteBase):
 
 class NotePublicOut(BaseModel):
     id: int
+    company_id: int
     title: str
     content: str
     image: str
@@ -177,6 +180,7 @@ class HelpCategoryBase(BaseModel):
     language_id: int
     title: str
     is_other: bool
+    content: Optional[str] = None
 
 
 class HelpCategoryCreate(HelpCategoryBase):
@@ -187,6 +191,7 @@ class HelpCategoryUpdate(BaseModel):
     language_id: Optional[int] = None
     title: Optional[str] = None
     is_other: Optional[bool] = None
+    content: Optional[str] = None
 
 
 class HelpCategoryOut(HelpCategoryBase):
@@ -199,6 +204,7 @@ class HelpCategoryPublicOut(BaseModel):
     title: str
     language_id: int
     is_other: Optional[bool] = None
+    content: Optional[str] = None
 
 
 

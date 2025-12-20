@@ -130,6 +130,7 @@ class HelpCategory(Base):
     language_id: Mapped[int] = mapped_column(ForeignKey("languages.id"), nullable=False)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     is_other: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    content: Mapped[str] = mapped_column(Text, nullable=True)
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), nullable=False, default=StatusEnum.active)
 
     company: Mapped["Company"] = relationship(back_populates="help_categories")

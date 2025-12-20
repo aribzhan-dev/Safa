@@ -7,6 +7,7 @@ async def get_public_posts(db: AsyncSession):
     r = await db.execute(
         select(
             Post.id,
+            Post.company_id,
             Post.title,
             Post.content,
             Post.image,
