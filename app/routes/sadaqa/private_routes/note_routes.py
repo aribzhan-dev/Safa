@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.sadaqa import Company, Note
 from app.core.db import get_session
 from app.core.sadaqa_deps import get_current_sadaqa_company
-from app.schemas.sadaqa_schemas import NoteCreate, NoteUpdate, NoteOut
+from app.schemas.sadaqa_schemas import NoteCreate, NoteUpdate, NoteOut, NotePrivedOut
 from app.services.sadaqa_private.note_service import (
     create_note, get_notes, update_note, delete_note
 )
@@ -23,7 +23,7 @@ async def create(
     return await create_note(db, data, company)
 
 
-@router.get("/", response_model=list[NoteOut])
+@router.get("/", response_model=list[NotePrivedOut])
 async def my_notes(
     db: AsyncSession = Depends(get_session),
     company=Depends(get_current_sadaqa_company)
@@ -31,7 +31,7 @@ async def my_notes(
     return await get_notes(db, company)
 
 
-@router.put("/{note_id}", response_model=NoteOut)
+@router.put("/{note_id}", response_model=NoteUpdate)
 async def update(
     note_id: int,
     data: NoteUpdate,

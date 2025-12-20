@@ -133,7 +133,7 @@ class NoteUpdate(BaseModel):
     address: Optional[str] = None
     goal_money: Optional[float] = None
     collected_money: Optional[float] = None
-
+    status: Optional[StatusEnum] = None
 
 class NoteOut(NoteBase):
     id: int
@@ -151,6 +151,11 @@ class NotePublicOut(BaseModel):
     goal_money: float
     collected_money: float
     language_id: int
+
+class NotePrivedOut(NoteBase):
+    id: int
+    status: Optional[StatusEnum]
+
 
 
 class MaterialsStatusBase(BaseModel):
@@ -260,18 +265,7 @@ class HelpRequestCreate(HelpRequestBase):
 
 
 class HelpRequestUpdate(BaseModel):
-    name: Optional[str] = None
-    surname: Optional[str] = None
-    age: Optional[int] = None
-    phone_number: Optional[str] = None
-    materials_status_id: Optional[int] = None
-    help_category_id: Optional[int] = None
-    other_category: Optional[str] = None
-    child_num: Optional[int] = None
-    address: Optional[str] = None
-    iin: Optional[str] = None
-    help_reason: Optional[str] = None
-    received_other_help: Optional[bool] = None
+    status: Optional[StatusEnum] = None
 
 
 class HelpRequestCommon(BaseModel):

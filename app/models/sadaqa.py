@@ -100,7 +100,7 @@ class Note(Base):
     address: Mapped[str] = mapped_column(String(200), nullable=False)
     goal_money: Mapped[float] = mapped_column(Float, nullable=False)
     collected_money: Mapped[float] = mapped_column(Float, nullable=False)
-    status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), default=StatusEnum.active)
+    status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), default=StatusEnum.inactive, nullable=False)
 
     company: Mapped["Company"] = relationship(back_populates="notes")
     language: Mapped[Language] = relationship(back_populates="notes")

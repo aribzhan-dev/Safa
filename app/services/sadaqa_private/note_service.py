@@ -1,8 +1,8 @@
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, update
 from app.schemas.sadaqa_schemas import NoteCreate, NoteUpdate
-from app.models.sadaqa import Note, Company
+from app.models.sadaqa import Note, Company, StatusEnum
 
 
 
@@ -14,11 +14,30 @@ async def create_note(
     if data.collected_money > data.goal_money:
         raise HTTPException(400, "Collected money cannot exceed goal")
 
-    note = Note(company_id=company.id, **data.model_dump())
+    note = Note(
+        company_id=company.id,
+        status=StatusEnum.inactive,
+        **data.model_dump(exclude="status")
+    )
     db.add(note)
     await db.commit()
     await db.refresh(note)
     return note
+
+
+async def archive_active_note(
+    db: AsyncSession,
+    company_id: int
+):
+    stmt = (
+        update(Note)
+        .where(
+            Note.company_id == company_id,
+            Note.status == StatusEnum.active
+        )
+        .values(status=StatusEnum.archived)
+    )
+    await db.execute(stmt)
 
 
 async def get_notes(
@@ -32,29 +51,40 @@ async def get_notes(
 
 
 async def update_note(
-        db: AsyncSession,
-        note_id: int,
-        data: NoteUpdate,
-        company: Company
+    db: AsyncSession,
+    note_id: int,
+    data: NoteUpdate,
+    company: Company
 ):
-    r = await db.execute(
+    result = await db.execute(
         select(Note).where(
             Note.id == note_id,
             Note.company_id == company.id
         )
     )
-    note = r.scalar_one_or_none()
+    note = result.scalar_one_or_none()
 
     if not note:
-        raise HTTPException(404, "Note not found or no permission")
+        raise HTTPException(404, "Note not found")
 
-    for k, v in data.model_dump(exclude_unset=True).items():
+    payload = data.model_dump(exclude_unset=True)
+
+    if payload.get("status") == StatusEnum.active:
+        await archive_active_note(db, company.id)
+        note.status = StatusEnum.active
+        payload.pop("status", None)
+
+    for k, v in payload.items():
         setattr(note, k, v)
 
     if note.collected_money > note.goal_money:
         raise HTTPException(400, "Collected money cannot exceed goal")
 
-    await db.commit()
+    try:
+        await db.commit()
+    except Exception:
+        raise HTTPException(409, "Only one active note allowed")
+
     await db.refresh(note)
     return note
 
