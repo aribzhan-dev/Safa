@@ -11,6 +11,7 @@ from app.routes.common.upload_routes import router as upload_router
 
 app = FastAPI(
     title="Safa API",
+    security=[{"HTTPBearer": []}],
     version="1.0.0",
     openapi_tags=[
         {"name": "Sadaqa | Company (Private)"},
@@ -54,32 +55,6 @@ app.mount(
 )
 
 
-def custom_openapi():
-    if app.openapi_schema:
-        return app.openapi_schema
-
-    openapi_schema = FastAPI.openapi(app)
-
-    openapi_schema["components"]["securitySchemes"] = {
-        "sadaqaAuth": {
-            "type": "http",
-            "scheme": "bearer",
-            "bearerFormat": "JWT",
-            "description": "Sadaqa Company Access Token",
-        },
-        "tourAuth": {
-            "type": "http",
-            "scheme": "bearer",
-            "bearerFormat": "JWT",
-            "description": "Tour Company Access Token",
-        },
-    }
-
-    app.openapi_schema = openapi_schema
-    return app.openapi_schema
-
-
-app.openapi = custom_openapi
 
 
 if __name__ == "__main__":

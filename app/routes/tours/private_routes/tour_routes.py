@@ -12,9 +12,7 @@ router = APIRouter(
     prefix="/tours",
     tags=["Tour / Tours (Private)"]
 )
-router.openapi_extra = {
-    "security": [{"sadaqaAuth": []}]
-}
+
 
 @router.post("/")
 async def create(

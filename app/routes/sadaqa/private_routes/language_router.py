@@ -10,9 +10,6 @@ router = APIRouter(
     prefix="/languages",
     tags=["Sadaqa / Private / Languages"]
 )
-router.openapi_extra = {
-    "security": [{"sadaqaAuth": []}]
-}
 
 
 @router.post(

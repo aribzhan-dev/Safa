@@ -13,9 +13,7 @@ router = APIRouter(
     prefix="/help-requests",
     tags=["Sadaqa | HelpRequest (Company)"]
 )
-router.openapi_extra = {
-    "security": [{"sadaqaAuth": []}]
-}
+
 
 
 @router.get("/", response_model=list[HelpRequestOut],)

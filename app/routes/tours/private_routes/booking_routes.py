@@ -9,9 +9,6 @@ router = APIRouter(
     prefix="/bookings",
     tags=["Tour / Bookings (Private)"]
 )
-router.openapi_extra = {
-    "security": [{"sadaqaAuth": []}]
-}
 
 @router.get("/")
 async def my_bookings(

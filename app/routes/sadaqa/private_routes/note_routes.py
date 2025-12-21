@@ -12,9 +12,6 @@ router = APIRouter(
     prefix="/notes",
     tags=["Sadaqa | Note (Private)"]
 )
-router.openapi_extra = {
-    "security": [{"sadaqaAuth": []}]
-}
 
 
 @router.post("/", response_model=NoteOut)
