@@ -13,9 +13,6 @@ async def get_company_help_requests(
     result = await db.execute(
         select(HelpRequest)
         .where(HelpRequest.company_id == company.id)
-        .options(
-            selectinload(HelpRequest.help_requests_file)
-        )
     )
     return result.scalars().all()
 

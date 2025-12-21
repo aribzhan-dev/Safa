@@ -161,7 +161,7 @@ class HelpRequest(Base):
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), nullable=False, default=StatusEnum.inactive)
 
     company: Mapped["Company"] = relationship(back_populates="help_requests")
-    help_requests_file: Mapped[List["HelpRequestFile"]] = relationship(back_populates="help_request", lazy="selectin")
+    files: Mapped[List["HelpRequestFile"]] = relationship(back_populates="help_request", lazy="selectin", cascade="all, delete-orphan")
     materials_status: Mapped["MaterialsStatus"] = relationship(back_populates="help_requests")
     help_category: Mapped["HelpCategory"] = relationship(back_populates="help_requests")
 
@@ -174,7 +174,7 @@ class HelpRequestFile(Base):
     help_request_id: Mapped[int] = mapped_column(ForeignKey("help_requests.id"), nullable=False)
     filename: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    help_request: Mapped[HelpRequest] = relationship(back_populates="help_requests_file")
+    help_request: Mapped[HelpRequest] = relationship(back_populates="files")
 
     def __repr__(self):
         return f"<HelpRequestFile {self.filename}"
