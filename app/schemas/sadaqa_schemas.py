@@ -152,6 +152,8 @@ class NotePublicOut(BaseModel):
     collected_money: float
     language_id: int
 
+    model_config = {"from_attributes": True}
+
 class NotePrivedOut(NoteBase):
     id: int
     status: Optional[StatusEnum]
