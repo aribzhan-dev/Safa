@@ -3,22 +3,17 @@ from sqlalchemy import select
 from app.models.sadaqa import HelpCategory, StatusEnum
 
 
-async def get_public_help_categories(
+async def get_public_company_categories(
     db: AsyncSession,
-    language_id: int | None = None
+    company_id: int,
+    language_id: int|None=None
 ):
-    query = select(
-        HelpCategory.id,
-        HelpCategory.title,
-        HelpCategory.language_id,
-        HelpCategory.is_other,
-        HelpCategory.content,
-    ).where(
+    q = select(HelpCategory).where(
+        HelpCategory.company_id == company_id,
         HelpCategory.status == StatusEnum.active
     )
+    if language_id is not None:
+        q = q.where(HelpCategory.language_id == language_id)
 
-    if language_id:
-        query = query.where(HelpCategory.language_id == language_id)
-
-    result = await db.execute(query)
-    return result.mappings().all()
+    res = await db.execute(q)
+    return res.scalars().all()
