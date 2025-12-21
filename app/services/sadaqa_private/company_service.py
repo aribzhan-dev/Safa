@@ -69,19 +69,30 @@ async def login_company(
 
 
 async def update_company(
-        db: AsyncSession,
-        company_id: int,
-        data: CompanyUpdate
+    db: AsyncSession,
+    company_id: int,
+    data: CompanyUpdate
 ):
-    result = await db.execute(
-        select(Company).where(Company.id == company_id)
-    )
-    company = result.scalar_one_or_none()
-
+    company = await db.get(Company, company_id)
     if not company:
         raise HTTPException(404, "Company not found")
 
-    for k, v in data.model_dump(exclude_unset=True).items():
+    payload = data.model_dump(exclude_unset=True)
+
+    if "payment" in payload:
+        exists = await db.execute(
+            select(Company.id).where(
+                Company.payment == payload["payment"],
+                Company.id != company_id
+            )
+        )
+        if exists.scalar_one_or_none():
+            raise HTTPException(
+                status_code=400,
+                detail="This payment link is already used by another company"
+            )
+
+    for k, v in payload.items():
         setattr(company, k, v)
 
     await db.commit()

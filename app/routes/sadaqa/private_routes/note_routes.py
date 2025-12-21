@@ -16,35 +16,35 @@ router = APIRouter(
 
 @router.post("/", response_model=NoteOut)
 async def create(
-    data: NoteCreate,
-    db: AsyncSession = Depends(get_session),
-    company=Depends(get_current_sadaqa_company)
+        data: NoteCreate,
+        db: AsyncSession = Depends(get_session),
+        company=Depends(get_current_sadaqa_company)
 ):
     return await create_note(db, data, company)
 
 
 @router.get("/", response_model=list[NotePrivedOut])
 async def my_notes(
-    db: AsyncSession = Depends(get_session),
-    company=Depends(get_current_sadaqa_company)
+        db: AsyncSession = Depends(get_session),
+        company=Depends(get_current_sadaqa_company)
 ):
     return await get_notes(db, company)
 
 
 @router.put("/{note_id}", response_model=NoteOut)
 async def update(
-    note_id: int,
-    data: NoteUpdate,
-    db: AsyncSession = Depends(get_session),
-    company=Depends(get_current_sadaqa_company)
+        note_id: int,
+        data: NoteUpdate,
+        db: AsyncSession = Depends(get_session),
+        company=Depends(get_current_sadaqa_company)
 ):
     return await update_note(db, note_id, data, company)
 
 
 @router.delete("/{note_id}")
 async def delete_my_note(
-    note_id: int,
-    db: AsyncSession = Depends(get_session),
-    company: Company = Depends(get_current_sadaqa_company)
+        note_id: int,
+        db: AsyncSession = Depends(get_session),
+        company: Company = Depends(get_current_sadaqa_company)
 ):
     return await delete_note(db, note_id, company)
