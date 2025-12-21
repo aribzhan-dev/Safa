@@ -22,6 +22,9 @@ router = APIRouter(
     prefix="/company",
     tags=["Sadaqa | Company (Private)"]
 )
+router.openapi_extra = {
+    "security": [{"sadaqaAuth": []}]
+}
 
 
 @router.post("/register", response_model=TokenResponse)

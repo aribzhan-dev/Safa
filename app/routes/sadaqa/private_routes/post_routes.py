@@ -13,6 +13,9 @@ router = APIRouter(
     prefix="/posts",
     tags=["Sadaqa | Post (Private)"]
 )
+router.openapi_extra = {
+    "security": [{"sadaqaAuth": []}]
+}
 
 
 @router.post("/", response_model=PostOut)

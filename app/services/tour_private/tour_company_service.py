@@ -3,8 +3,8 @@ from sqlalchemy import select
 from fastapi import HTTPException
 from app.models.tours import TourCompanies
 from app.core.security import hash_password, verify_password
-from app.core.jwt import create_tokens
-from app.schemas.tour_schemas import TourCompanyCreate, TourCompanyUpdate
+from app.core.jwt import create_tokens, decode_refresh_token
+from app.schemas.tour_schemas import TourCompanyCreate, TourCompanyUpdate, RefreshRequest
 
 
 async def create_company(db: AsyncSession, data: TourCompanyCreate):
@@ -22,12 +22,13 @@ async def create_company(db: AsyncSession, data: TourCompanyCreate):
         rating=data.rating,
     )
 
+    db.add(company)
+    await db.flush()
+
     access, refresh = create_tokens({
         "company_id": company.id,
         "role": "tour_company"
     })
-
-    db.add(company)
     await db.commit()
     await db.refresh(company)
     return {
@@ -35,6 +36,7 @@ async def create_company(db: AsyncSession, data: TourCompanyCreate):
         "refresh_token": refresh,
         "token_type": "Bearer"
     }
+
 
 
 async def login_company(db: AsyncSession, username: str, password: str):
@@ -57,6 +59,33 @@ async def login_company(db: AsyncSession, username: str, password: str):
         "token_type": "Bearer"
     }
 
+
+async def refresh_tokens(db: AsyncSession, refresh_token: str):
+    payload = decode_refresh_token(refresh_token)
+
+    if payload.get("type") != "refresh":
+        raise HTTPException(401, "Not a refresh token")
+
+    company_id = payload.get("company_id")
+
+    result = await db.execute(
+        select(TourCompanies).where(TourCompanies.id == company_id)
+    )
+    company = result.scalar_one_or_none()
+
+    if not company:
+        raise HTTPException(401, "Company not found")
+
+    access, refresh = create_tokens({
+        "company_id": company.id,
+        "role": "tour_company"
+    })
+
+    return {
+        "access_token": access,
+        "refresh_token": refresh,
+        "token_type": "Bearer"
+    }
 
 
 

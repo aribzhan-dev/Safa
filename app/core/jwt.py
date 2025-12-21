@@ -38,9 +38,16 @@ def create_tokens(data: dict):
 
 def decode_access_token(token: str):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        if payload.get("type") != "access":
-            raise HTTPException(401, "Invalid token type")
+        payload = jwt.decode(
+            token,
+            SECRET_KEY,
+            algorithms=[ALGORITHM],
+            options={"require": ["exp", "type"]}
+        )
+
+        if payload["type"] != "access":
+            raise HTTPException(401, "Not an access token")
+
         return payload
 
     except jwt.ExpiredSignatureError:
@@ -52,9 +59,16 @@ def decode_access_token(token: str):
 
 def decode_refresh_token(token: str):
     try:
-        payload = jwt.decode(token, REFRESH_SECRET_KEY, algorithms=[ALGORITHM])
-        if payload.get("type") != "refresh":
-            raise HTTPException(401, "Invalid token type")
+        payload = jwt.decode(
+            token,
+            REFRESH_SECRET_KEY,
+            algorithms=[ALGORITHM],
+            options={"require": ["exp", "type"]}
+        )
+
+        if payload["type"] != "refresh":
+            raise HTTPException(401, "Not a refresh token")
+
         return payload
 
     except jwt.ExpiredSignatureError:

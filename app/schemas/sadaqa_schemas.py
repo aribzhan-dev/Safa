@@ -237,6 +237,7 @@ class HelpRequestFileOut(HelpRequestFileBase):
 
 
 class HelpRequestBase(BaseModel):
+    company_id: int
     name: str
     surname: str
     age: int

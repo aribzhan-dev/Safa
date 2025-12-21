@@ -12,6 +12,9 @@ router = APIRouter(
     prefix="/guides",
     tags=["Tour / Guides (Private)"]
 )
+router.openapi_extra = {
+    "security": [{"sadaqaAuth": []}]
+}
 
 @router.post("/")
 async def create(
@@ -22,7 +25,7 @@ async def create(
     return await create_guide(db, company, data)
 
 @router.get("/")
-async def list_(
+async def list_guides(
     db: AsyncSession = Depends(get_session),
     company = Depends(get_current_tour_company)
 ):

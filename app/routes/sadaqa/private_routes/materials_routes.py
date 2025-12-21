@@ -21,6 +21,9 @@ router = APIRouter(
     prefix="/materials-status",
     tags=["Sadaqa | MaterialsStatus (Private)"]
 )
+router.openapi_extra = {
+    "security": [{"sadaqaAuth": []}]
+}
 
 
 @router.post("/", response_model=MaterialsStatusOut)

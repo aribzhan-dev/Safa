@@ -20,6 +20,9 @@ router = APIRouter(
     prefix="/help-categories",
     tags=["Sadaqa | HelpCategory (Private)"]
 )
+router.openapi_extra = {
+    "security": [{"sadaqaAuth": []}]
+}
 
 
 @router.post("/", response_model=HelpCategoryOut)

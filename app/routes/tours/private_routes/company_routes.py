@@ -13,6 +13,9 @@ router = APIRouter(
     prefix="/company",
     tags=["Tour / Company (Private)"]
 )
+router.openapi_extra = {
+    "security": [{"sadaqaAuth": []}]
+}
 
 @router.post("/register")
 async def register_company(
