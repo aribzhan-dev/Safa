@@ -15,6 +15,7 @@ from app.services.sadaqa_private.company_service import (
     login_company,
     update_company,
     refresh_tokens,
+    logout,
 )
 
 router = APIRouter(
@@ -44,6 +45,11 @@ async def login_company_route(
 @router.post("/refresh")
 async def refresh_token(data: RefreshRequest):
     return await refresh_tokens(data.refresh_token)
+
+
+@router.post("/logout")
+async def logout_route(data: RefreshRequest):
+    return await logout(data.refresh_token)
 
 
 

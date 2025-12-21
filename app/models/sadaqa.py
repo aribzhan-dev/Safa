@@ -158,7 +158,7 @@ class HelpRequest(Base):
     help_reason: Mapped[str] = mapped_column(Text, nullable=False)
     received_other_help: Mapped[bool] = mapped_column(Boolean, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
-    status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), nullable=False, default=StatusEnum.active)
+    status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), nullable=False, default=StatusEnum.inactive)
 
     company: Mapped["Company"] = relationship(back_populates="help_requests")
     help_requests_file: Mapped[List["HelpRequestFile"]] = relationship(back_populates="help_request")

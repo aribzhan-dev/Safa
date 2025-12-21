@@ -92,6 +92,21 @@ async def refresh_tokens(refresh_token: str):
     }
 
 
+
+async def logout(refresh_token: str):
+    payload = decode_refresh_token(refresh_token)
+
+    if not payload:
+        raise HTTPException(401, "Invalid refresh token")
+
+    if payload.get("type") != "refresh":
+        raise HTTPException(401, "Not a refresh token")
+
+    return {
+        "detail": "Logged out successfully"
+    }
+
+
 async def update_company(
     db: AsyncSession,
     company_id: int,
