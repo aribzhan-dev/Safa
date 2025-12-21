@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from app.models.sadaqa import Company, CompanyAuth
 from app.schemas.sadaqa_schemas import CompanyCreate, CompanyUpdate
 from app.core.security import verify_password, hash_password
-from app.core.jwt import create_tokens
+from app.core.jwt import create_tokens, decode_access_token, decode_refresh_token
 
 
 
@@ -60,6 +60,30 @@ async def login_company(
         "company_auth_id": auth.id,
         "role": "company"
     })
+
+    return {
+        "access_token": access,
+        "refresh_token": refresh,
+        "token_type": "Bearer"
+    }
+
+
+
+async def refresh_tokens(refresh_token: str):
+    payload = decode_refresh_token(refresh_token)
+
+    if not payload:
+        raise HTTPException(401, "Invalid refresh token")
+
+    if payload.get("type") != "refresh":
+        raise HTTPException(401, "Not a refresh token")
+
+    new_payload = {
+        "company_auth_id": payload["company_auth_id"],
+        "role": payload["role"],
+    }
+
+    access, refresh = create_tokens(new_payload)
 
     return {
         "access_token": access,

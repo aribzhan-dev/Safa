@@ -7,12 +7,14 @@ from app.schemas.sadaqa_schemas import (
     CompanyLogin,
     CompanyUpdate,
     CompanyOut,
+    RefreshRequest,
     TokenResponse
 )
 from app.services.sadaqa_private.company_service import (
     create_company,
     login_company,
-    update_company
+    update_company,
+    refresh_tokens,
 )
 
 router = APIRouter(
@@ -35,6 +37,13 @@ async def login_company_route(
     db: AsyncSession = Depends(get_session)
 ):
     return await login_company(db, data.login, data.password)
+
+
+
+
+@router.post("/refresh")
+async def refresh_token(data: RefreshRequest):
+    return await refresh_tokens(data.refresh_token)
 
 
 
