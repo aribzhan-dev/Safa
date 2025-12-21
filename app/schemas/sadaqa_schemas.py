@@ -147,6 +147,7 @@ class NotePublicOut(BaseModel):
     note_type: Optional[TypeChoices]
     title: str
     content: str
+    address: str
     image: str
     goal_money: float
     collected_money: float
