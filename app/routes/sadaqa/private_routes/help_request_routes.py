@@ -6,7 +6,7 @@ from app.core.sadaqa_deps import get_current_sadaqa_company
 from app.schemas.sadaqa_schemas import HelpRequestOut, HelpRequestUpdate
 from app.services.sadaqa_private.help_request_service import (
     get_company_help_requests,
-    update_help_request
+    update_help_request_status
 )
 
 router = APIRouter(
@@ -30,9 +30,4 @@ async def update(
         db: AsyncSession = Depends(get_session),
         company=Depends(get_current_sadaqa_company),
 ):
-    return await update_help_request(
-        db=db,
-        hr_id=help_request_id,
-        status=data.status,
-        company=company,
-    )
+    return await update_help_request_status(db, help_request_id, data, company)

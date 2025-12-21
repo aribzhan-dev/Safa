@@ -173,8 +173,7 @@ class MaterialsStatusCreate(MaterialsStatusBase):
 class MaterialsStatusUpdate(BaseModel):
     language_id: Optional[int] = None
     title: Optional[str] = None
-
-
+    status: Optional[StatusEnum] = None
 
 
 
@@ -205,6 +204,7 @@ class HelpCategoryUpdate(BaseModel):
     title: Optional[str] = None
     is_other: Optional[bool] = None
     content: Optional[str] = None
+    status: Optional[StatusEnum] = None
 
 
 class HelpCategoryOut(HelpCategoryBase):

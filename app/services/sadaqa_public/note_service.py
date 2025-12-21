@@ -12,6 +12,5 @@ async def get_public_active_note(
     if company_id is not None:
         query = query.where(Note.company_id == company_id)
 
-
     result = await db.execute(query.limit(1))
     return result.scalar_one_or_none()

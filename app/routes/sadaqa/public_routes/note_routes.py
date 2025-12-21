@@ -16,9 +16,4 @@ async def get_active_note(
     company_id: int | None = None,
     db: AsyncSession = Depends(get_session),
 ):
-    note = await get_public_active_note(db, company_id)
-
-    if not note:
-        return {}
-
-    return note
+    return await get_public_active_note(db, company_id)
