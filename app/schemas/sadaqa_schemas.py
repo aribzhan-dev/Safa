@@ -289,6 +289,7 @@ class HelpRequestOut(HelpRequestCommon):
     id: int
     created_at: datetime
     files: list[HelpRequestFileOut] = Field(default_factory=list)
+    status: Optional[StatusEnum]
 
     model_config = ConfigDict(from_attributes=True)
 

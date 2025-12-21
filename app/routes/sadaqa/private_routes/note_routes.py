@@ -43,8 +43,8 @@ async def update(
 
 @router.delete("/{note_id}")
 async def delete_my_note(
-        note_id: int,
-        db: AsyncSession = Depends(get_session),
-        company: Company = Depends(get_current_sadaqa_company)
+    note_id: int,
+    db: AsyncSession = Depends(get_session),
+    company: Company = Depends(get_current_sadaqa_company)
 ):
     return await delete_note(db, note_id, company)

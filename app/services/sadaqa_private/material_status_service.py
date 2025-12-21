@@ -35,6 +35,20 @@ async def get_material_statuses(
     return r.scalars().all()
 
 
+async def get_material_status_by_id(
+    db: AsyncSession,
+    ms_id: int,
+    company: Company
+):
+    r = await db.execute(
+        select(MaterialsStatus).where(
+            MaterialsStatus.id == ms_id,
+            MaterialsStatus.company_id == company.id
+        )
+    )
+    return r.scalar_one_or_none()
+
+
 
 async def update_material_status(
     db: AsyncSession,
@@ -60,4 +74,25 @@ async def update_material_status(
     await db.refresh(ms)
     return ms
 
+
+async def delete_material_status(
+    db: AsyncSession,
+    ms_id: int,
+    company: Company
+):
+    r = await db.execute(
+        select(MaterialsStatus).where(
+            MaterialsStatus.id == ms_id,
+            MaterialsStatus.company_id == company.id
+        )
+    )
+    ms =  r.scalar_one_or_none()
+
+    if not ms:
+        raise HTTPException(404, "Material status not found or no permission")
+
+    await db.delete(ms)
+    await db.commit()
+
+    return {"detail": "Material status deleted successfully"}
 

@@ -31,6 +31,20 @@ async def get_help_categories(
     return r.scalars().all()
 
 
+async def get_help_category_by_id(
+    db: AsyncSession,
+    category_id: int,
+    company: Company
+):
+    r = await db.execute(
+        select(HelpCategory).where(
+            HelpCategory.id == category_id,
+            HelpCategory.company_id == company.id
+        )
+    )
+    return r.scalar_one_or_none()
+
+
 async def update_help_category(
     db: AsyncSession,
     category_id: int,
@@ -58,3 +72,25 @@ async def update_help_category(
     await db.refresh(category)
 
     return category
+
+async def delete_help_category(
+    db: AsyncSession,
+    category_id: int,
+    company: Company
+):
+    result = await db.execute(
+        select(HelpCategory).where(
+            HelpCategory.id == category_id,
+            HelpCategory.company_id == company.id
+        )
+    )
+
+    category = result.scalar_one_or_none()
+
+    if not category:
+        raise HTTPException(404, "Help category not found or no permission")
+
+    await db.delete(category)
+    await db.commit()
+
+    return {"detail": "Help Category deleted successfully"}
