@@ -161,7 +161,7 @@ class HelpRequest(Base):
     status: Mapped[StatusEnum] = mapped_column(SqlEnum(StatusEnum), nullable=False, default=StatusEnum.inactive)
 
     company: Mapped["Company"] = relationship(back_populates="help_requests")
-    help_requests_file: Mapped[List["HelpRequestFile"]] = relationship(back_populates="help_request")
+    help_requests_file: Mapped[List["HelpRequestFile"]] = relationship(back_populates="help_request", lazy="selectin")
     materials_status: Mapped["MaterialsStatus"] = relationship(back_populates="help_requests")
     help_category: Mapped["HelpCategory"] = relationship(back_populates="help_requests")
 

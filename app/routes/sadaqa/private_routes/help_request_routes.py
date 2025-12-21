@@ -23,11 +23,16 @@ async def my_requests(
     return await get_company_help_requests(db, company)
 
 
-@router.put("/{hr_id}", response_model=HelpRequestUpdate)
+@router.put("/{hr_id}", response_model=HelpRequestOut,)
 async def update(
-    hr_id: int,
-    data: HelpRequestUpdate,
-    db: AsyncSession = Depends(get_session),
-    company=Depends(get_current_sadaqa_company)
+        help_request_id: int,
+        data: HelpRequestUpdate,
+        db: AsyncSession = Depends(get_session),
+        company=Depends(get_current_sadaqa_company),
 ):
-    return await update_help_request(db, hr_id, data, company)
+    return await update_help_request(
+        db=db,
+        hr_id=help_request_id,
+        status=data.status,
+        company=company,
+    )
