@@ -1,13 +1,14 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.tour_deps import get_current_tour_company
-from app.core.db import get_session
+from app.schemas.tour_schemas import TourCompanyCreate, TourCompanyUpdate, RefreshRequest
 from app.services.tour_private.tour_company_service import update_company
-from app.schemas.tour_schemas import TourCompanyCreate, TourCompanyUpdate
+from app.core.tour_deps import get_current_tour_company
 from app.services.tour_private.tour_company_service import (
     create_company,
-    login_company
+    login_company,
+    refresh_tokens,
 )
+from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Depends
+from app.core.db import get_session
 
 router = APIRouter(
     prefix="/company",
@@ -30,6 +31,10 @@ async def login(
 ):
     return await login_company(db, username, password)
 
+
+@router.post("/refresh")
+async def refresh_token(data: RefreshRequest):
+    return await refresh_tokens(data.refresh_token)
 
 
 @router.put("/me")

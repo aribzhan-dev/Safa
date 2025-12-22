@@ -1,8 +1,8 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from fastapi import HTTPException
-from app.models.tours import Tours, TourCompanies
 from app.schemas.tour_schemas import TourCreate, TourUpdate
+from app.models.tours import Tours, TourCompanies
+from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import HTTPException
+from sqlalchemy import select
 from datetime import datetime
 
 
