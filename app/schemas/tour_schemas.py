@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, field_validator, ConfigDict, EmailStr
+from pydantic import BaseModel, Field, field_validator, ConfigDict, model_validator
 from datetime import datetime
 from typing import Optional
 from enum import IntEnum
@@ -96,12 +96,11 @@ class TourBase(BaseModel):
     max_people: int = Field(..., ge=1)
     location: str = Field(..., min_length=1, max_length=255)
 
-    @field_validator("return_date")
-    def validate_return(cls, v, values):
-        start = values.get("departure_date")
-        if start and v < start:
+    @model_validator(mode="after")
+    def check_dates(self):
+        if self.return_date < self.departure_date:
             raise ValueError("return_date must be after departure_date")
-        return v
+        return self
 
 
 class TourCreate(TourBase):
@@ -121,12 +120,11 @@ class TourUpdate(BaseModel):
     max_people: Optional[int] = Field(None, ge=1)
     location: Optional[str] = Field(None, min_length=1, max_length=255)
 
-    @field_validator("return_date")
-    def validate_return(cls, v, values):
-        start = values.get("departure_date")
-        if start and v and v < start:
+    @model_validator(mode="after")
+    def check_dates(self):
+        if self.return_date < self.departure_date:
             raise ValueError("return_date must be after departure_date")
-        return v
+        return self
 
 
 class TourOut(TourBase):
