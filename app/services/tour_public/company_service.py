@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
+from sqlalchemy import select, func, and_
 from app.models.tours import TourCompanies, Tours, StatusEnum
 
 
@@ -30,3 +30,13 @@ async def get_public_companies(db: AsyncSession):
         }
         for row in result.all()
     ]
+
+
+
+async def get_total_active_tours_count(db: AsyncSession) -> int:
+    count = await db.scalar(
+        select(func.count(Tours.id))
+        .where(Tours.status == StatusEnum.active)
+    )
+
+    return int(count or 0)

@@ -36,6 +36,9 @@ class TourCompanyPublicOut(TourCompanyBase):
     active_tours_id: int
 
 
+class ActiveToursCountOut(BaseModel):
+    active_tours_count: int
+
 
 class TourCompanyOut(TourCompanyBase):
     id: int
