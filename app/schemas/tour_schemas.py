@@ -122,8 +122,11 @@ class TourUpdate(BaseModel):
 
     @model_validator(mode="after")
     def check_dates(self):
-        if self.return_date < self.departure_date:
-            raise ValueError("return_date must be after departure_date")
+        if self.departure_date and self.return_date:
+            if self.return_date < self.departure_date:
+                raise ValueError(
+                    "return_date must be after departure_date"
+                )
         return self
 
 
