@@ -31,6 +31,11 @@ class TourCompanyUpdate(BaseModel):
     username: Optional[str] = Field(None, min_length=3, max_length=50)
     password: Optional[str] = Field(None, min_length=6, max_length=100)
 
+class TourCompanyPublicOut(TourCompanyBase):
+    id: int
+    active_tours_id: int
+
+
 
 class TourCompanyOut(TourCompanyBase):
     id: int
