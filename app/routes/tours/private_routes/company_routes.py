@@ -2,7 +2,7 @@ from app.schemas.tour_schemas import TourCompanyCreate, TourCompanyUpdate, Refre
 from app.services.tour_private.tour_company_service import update_company
 from app.core.tour_deps import get_current_tour_company
 from app.services.tour_private.tour_company_service import (
-    create_company,
+    # create_company,
     login_company,
     refresh_tokens,
 )
@@ -16,12 +16,12 @@ router = APIRouter(
 )
 
 
-@router.post("/register")
-async def register_company(
-    data: TourCompanyCreate,
-    db: AsyncSession = Depends(get_session)
-):
-    return await create_company(db, data)
+# @router.post("/register")
+# async def register_company(
+#     data: TourCompanyCreate,
+#     db: AsyncSession = Depends(get_session)
+# ):
+#     return await create_company(db, data)
 
 @router.post("/login")
 async def login(

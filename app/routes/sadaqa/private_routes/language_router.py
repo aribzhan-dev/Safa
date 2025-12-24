@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_session
 from app.schemas.sadaqa_schemas import LanguageCreate, LanguageOut
-from app.services.admin.language_service import create_language
+from app.services.admin.admin_service import create_language
 
 
 router = APIRouter(

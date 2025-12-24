@@ -11,7 +11,7 @@ from app.schemas.sadaqa_schemas import (
     TokenResponse
 )
 from app.services.sadaqa_private.company_service import (
-    create_company,
+    # create_company,
     login_company,
     update_company,
     refresh_tokens,
@@ -25,12 +25,12 @@ router = APIRouter(
 
 
 
-@router.post("/register", response_model=TokenResponse)
-async def register_company(
-    data: CompanyCreate,
-    db: AsyncSession = Depends(get_session)
-):
-    return await create_company(db, data)
+# @router.post("/register", response_model=TokenResponse)
+# async def register_company(
+#     data: CompanyCreate,
+#     db: AsyncSession = Depends(get_session)
+# ):
+#     return await create_company(db, data)
 
 
 @router.post("/login", response_model=TokenResponse)
