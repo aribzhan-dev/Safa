@@ -10,38 +10,7 @@ from app.core.jwt import create_tokens, decode_access_token, decode_refresh_toke
 
 
 
-async def create_company(
-        db: AsyncSession,
-        data: CompanyCreate
-):
-    company = Company(
-        title=data.title,
-        why_collecting=data.why_collecting,
-        image=data.image,
-        payment=data.payment,
-    )
-    db.add(company)
-    await db.flush()
 
-    auth = CompanyAuth(
-        company_id=company.id,
-        login=data.login,
-        password_hash=hash_password(data.password)
-    )
-    db.add(auth)
-    await db.commit()
-    await db.refresh(company)
-
-    access, refresh = create_tokens({
-        "company_auth_id": auth.id,
-        "role": "company"
-    })
-
-    return {
-        "access_token": access,
-        "refresh_token": refresh,
-        "token_type": "Bearer"
-    }
 
 async def login_company(
         db: AsyncSession,

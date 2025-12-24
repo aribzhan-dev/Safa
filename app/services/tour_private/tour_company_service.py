@@ -7,35 +7,7 @@ from fastapi import HTTPException
 from sqlalchemy import select
 
 
-async def create_company(db: AsyncSession, data: TourCompanyCreate):
-    exists = await db.execute(
-        select(TourCompanies).where(TourCompanies.username == data.username)
-    )
-    if exists.scalar_one_or_none():
-        raise HTTPException(400, "Username already exists")
 
-    company = TourCompanies(
-        username=data.username,
-        password_hash=hash_password(data.password),
-        logo=data.logo,
-        comp_name=data.comp_name,
-        rating=data.rating,
-    )
-
-    db.add(company)
-    await db.flush()
-
-    access, refresh = create_tokens({
-        "company_id": company.id,
-        "role": "tour_company"
-    })
-    await db.commit()
-    await db.refresh(company)
-    return {
-        "access_token": access,
-        "refresh_token": refresh,
-        "token_type": "Bearer"
-    }
 
 
 
