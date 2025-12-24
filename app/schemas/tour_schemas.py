@@ -94,6 +94,7 @@ class TourGuideOut(TourGuideBase):
     model_config = ConfigDict(from_attributes=True)
 
 
+
 class TourBase(BaseModel):
     tour_category_id: int
     tour_guid_id: int
