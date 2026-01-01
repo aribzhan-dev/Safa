@@ -7,10 +7,10 @@ from app.services.notification_service import notify_device
 
 router = APIRouter(prefix="/notifications")
 
-@router.post("/device")
-async def send_to_device(
-    data: NotificationCreate,
-    db: AsyncSession = Depends(get_session),
-    admin=Depends(get_current_admin)
-):
-    return await notify_device(db, data)
+# @router.post("/device")
+# async def send_to_device(
+#     data: NotificationCreate,
+#     db: AsyncSession = Depends(get_session),
+#     admin=Depends(get_current_admin)
+# ):
+#     return await notify_device(db, data)
