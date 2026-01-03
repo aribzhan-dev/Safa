@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  api:
+    build: .
+    container_name: safa_api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./media:/app/media
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    container_name: safa_db
+    environment:
+      POSTGRES_DB: safa
+      POSTGRES_USER: safa
+      POSTGRES_PASSWORD: safa
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
