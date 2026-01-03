@@ -54,6 +54,10 @@ app.mount(
     name="media",
 )
 
+@app.get("/")
+def root():
+    return {"status": "ok"}
+
 
 
 
