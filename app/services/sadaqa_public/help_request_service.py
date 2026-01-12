@@ -4,7 +4,7 @@ from fastapi import HTTPException
 
 from app.models.sadaqa import Company, HelpRequest, MaterialsStatus, HelpCategory
 from app.schemas.sadaqa_schemas import HelpRequestCreate
-from app.services.notification_service import notify_sadaqa_company
+# from app.services.notification_service import notify_sadaqa_company
 
 
 async def create_help_request(
@@ -61,12 +61,12 @@ async def create_help_request(
     await db.commit()
     await db.refresh(hr)
 
-    await notify_sadaqa_company(
-        db=db,
-        company_id=company.id,
-        title="New Help Request",
-        body=f"{data.name} {data.surname} asked help request",
-        type_="help_request",
-    )
+    # await notify_sadaqa_company(
+    #     db=db,
+    #     company_id=company.id,
+    #     title="New Help Request",
+    #     body=f"{data.name} {data.surname} asked help request",
+    #     type_="help_request",
+    # )
 
     return hr

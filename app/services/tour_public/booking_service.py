@@ -5,7 +5,7 @@ import random, string
 
 from app.models.tours import Tours, BookingTour
 from app.schemas.tour_schemas import BookingCreate
-from app.services.notification_service import notify_tour_company
+# from app.services.notification_service import notify_tour_company
 
 
 def generate_secret_code() -> str:
@@ -39,12 +39,12 @@ async def create_public_booking(
     await db.commit()
     await db.refresh(booking)
 
-    await notify_tour_company(
-        db=db,
-        tour_company_id=tour.tour_company_id,
-        title="New booking request",
-        body=f"{data.name} {data.surname} booked for tour",
-        type_="booking",
-    )
+    # await notify_tour_company(
+    #     db=db,
+    #     tour_company_id=tour.tour_company_id,
+    #     title="New booking request",
+    #     body=f"{data.name} {data.surname} booked for tour",
+    #     type_="booking",
+    # )
 
     return booking
