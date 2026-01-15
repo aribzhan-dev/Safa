@@ -7,7 +7,7 @@ from app.routes.sadaqa.public_routes import router as public_sadaqa_router
 from app.routes.tours.private_routes import router as private_tours_router
 from app.routes.tours.public_routes import router as public_tours_router
 from app.routes.common.upload_routes import router as upload_router
-
+from app.routes.admin.auth_routes import router as auth_router
 
 app = FastAPI(
     title="Safa API",
@@ -46,6 +46,10 @@ app.include_router(
 app.include_router(
     upload_router,
     prefix="/api",
+)
+app.include_router(
+    auth_router,
+    prefix="/api/auth",
 )
 
 app.mount(
